@@ -35,4 +35,4 @@ Route::middleware('auth')->group(function () {
     })->name('inspections.index');
 });
 
-//require __DIR__.'/auth.php';
+require __DIR__.'/auth.php';
