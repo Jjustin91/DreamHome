@@ -1,63 +1,57 @@
+{{-- resources/views/layouts/app.blade.php --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config('app.name', 'DreamHome') }} - @yield('title')</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-[#f0ebe6] font-sans" style="margin:0; overflow: hidden;">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <div style="display: flex; height: 100vh;">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-[#ede9e6] flex font-sans text-[#5c4f4a]">
+        {{-- ── SIDEBAR: fixed, never scrolls ── --}}
+        <aside style="width: 220px; flex-shrink: 0; height: 100vh; position: fixed; top: 0; left: 0; overflow: hidden; z-index: 20;">
             @include('layouts.navigation')
+        </aside>
 
-            <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-                <header class="bg-white border-b border-[#5c4f4a]/10 h-16 flex items-center justify-between px-6 lg:px-8 z-10 shadow-sm">
-                    <div class="font-semibold text-xl text-[#5c4f4a] tracking-tight">
-                        @isset($header)
-                            {{ $header }}
-                        @endisset
+        {{-- ── MAIN: starts after sidebar, only this scrolls ── --}}
+        <div style="margin-left: 220px; flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; min-width: 0;">
+
+            {{-- Top Bar --}}
+            <header class="bg-white border-b border-stone-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+                <h1 class="text-lg font-semibold text-stone-800">@yield('title', 'Dashboard')</h1>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-[#c9996b] rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                        {{ substr(Auth::user()->name, 0, 1) }}
                     </div>
+                    <span class="text-sm font-medium text-stone-700">{{ Auth::user()->name }}</span>
+                </div>
+            </header>
 
-                    <div class="flex items-center gap-4">
-                        <x-dropdown align="right" width="48">
-                            <x-slot name="trigger">
-                                <button class="flex items-center gap-2 px-3 py-1.5 border border-[#5c4f4a]/10 rounded-full hover:bg-[#ede9e6]/50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#c9996b]/50 bg-white">
-                                    <div class="w-8 h-8 rounded-full bg-[#c9996b] text-white flex items-center justify-center font-bold text-sm">
-                                        {{ substr(Auth::user()->name, 0, 1) }}
-                                    </div>
-                                    <span class="text-sm font-medium text-[#5c4f4a] hidden sm:block">{{ Auth::user()->name }}</span>
-                                    <svg class="w-4 h-4 text-[#5c766d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </button>
-                            </x-slot>
-
-                            <x-slot name="content">
-                                <x-dropdown-link :href="route('profile.edit')" class="flex items-center gap-2 text-[#5c4f4a] hover:text-[#c9996b] hover:bg-[#ede9e6]/50">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                    </svg>
-                                    {{ __('Profile') }}
-                                </x-dropdown-link>
-                            </x-slot>
-                        </x-dropdown>
+            {{-- Page Content --}}
+            <main class="flex-1 p-6">
+                @if(session('success'))
+                    <div class="mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
+                        {{ session('success') }}
                     </div>
-                </header>
-
-                <main class="flex-1 overflow-y-auto p-6 lg:p-8">
-                    <div class="max-w-7xl mx-auto">
-                        {{ $slot }}
+                @endif
+                @if($errors->any())
+                    <div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+                        <ul class="list-disc list-inside space-y-1">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
-                </main>
-            </div>
+                @endif
+
+                @yield('content')
+            </main>
+
         </div>
-    </body>
+    </div>
+
+</body>
 </html>
