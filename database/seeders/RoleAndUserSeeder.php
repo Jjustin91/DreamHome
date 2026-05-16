@@ -11,18 +11,21 @@ class RoleAndUserSeeder extends Seeder
     public function run()
     {
         // 1. Create the Roles based on your Matrix
-        Role::create(['name' => 'Super Admin']);
-        Role::create(['name' => 'Manager']);
-        Role::create(['name' => 'Supervisor']);
-        Role::create(['name' => 'Salesperson']);
-        Role::create(['name' => 'Secretary']);
+        Role::firstOrCreate(['name' => 'Super Admin']);
+        Role::firstOrCreate(['name' => 'Manager']);
+        Role::firstOrCreate(['name' => 'Supervisor']);
+        Role::firstOrCreate(['name' => 'Salesperson']);
+        Role::firstOrCreate(['name' => 'Secretary']);
 
         // 2. Create YOUR Super Admin Account
-        $superAdmin = User::create([
-            'name' => 'System Controller',
-            'email' => 'admin@dreamhome.test',
-            'password' => bcrypt('password123'), 
-        ]);
+        $superAdmin = User::firstOrCreate(
+            ['staff_no' => 'ADMIN'], // 1. It checks if this staff_no exists
+            [
+                // 2. If it DOES NOT exist, it creates it with these details
+                'name' => 'System Controller',
+                'password' => bcrypt('password123'), 
+            ]
+        );
         
         // 3. Assign the role
         $superAdmin->assignRole('Super Admin');
