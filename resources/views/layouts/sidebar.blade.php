@@ -1,19 +1,19 @@
 <aside class="flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-dh-charcoal border-r rtl:border-r-0 rtl:border-l border-dh-charcoal shadow-lg">
     
-    <div class="flex items-center justify-center mb-6">
-        <span class="text-2xl font-bold text-dh-light tracking-wider uppercase">
-            Dream<span class="text-dh-sand">Home</span>
-        </span>
-    </div>
-
-    <div class="flex items-center px-2 pb-6 mb-6 border-b border-dh-forest/50">
-        <div class="w-10 h-10 rounded-full bg-dh-forest flex items-center justify-center text-dh-light font-bold">
-            {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
-        </div>
-        <div class="ml-3">
-            <p class="text-sm font-medium text-dh-light">{{ Auth::user()->name ?? 'User Name' }}</p>
-            <p class="text-xs text-dh-sand">System Role</p>
-        </div>
+    <div class="flex items-center justify-center pb-6 mt-2 mb-6 border-b border-dh-sand/20">
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group">
+            
+            <div class="p-2 transition-colors duration-300 rounded-lg shadow-md bg-dh-forest group-hover:bg-dh-sand">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+            </div>
+            
+            <span class="text-2xl font-black tracking-widest text-white uppercase">
+                Dream<span class="text-dh-sand">Home</span>
+            </span>
+            
+        </a>
     </div>
 
     <div class="flex flex-col justify-between flex-1 mt-2">
@@ -92,14 +92,6 @@
                     <span class="mx-2 text-sm font-medium">Lease Agreements</span>
                 </a>
             @endrole
-
-            <a class="flex items-center px-3 py-2 mt-4 text-dh-light/80 transition-colors duration-300 transform rounded-lg hover:bg-dh-forest hover:text-dh-light" href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" />
-                </svg>
-                <span class="mx-2 text-sm font-medium">Placeholder Two</span>
-            </a>
-            
         </nav>
 
         <div class="mt-8">

@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders; // <-- 1. Add this line right here!
+
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
@@ -24,7 +26,5 @@ class RoleAndUserSeeder extends Seeder
         
         // 3. Assign the role
         $superAdmin->assignRole('Super Admin');
-        
-        // (Optional: Go ahead and seed a dummy Manager, Supervisor, etc., so your team has accounts to test with)
     }
 }

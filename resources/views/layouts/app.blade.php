@@ -19,13 +19,33 @@
 
             <div class="flex flex-col flex-1 overflow-hidden">
                 
-                @if (isset($header))
-                    <header class="bg-white shadow border-b border-dh-sand/30">
-                        <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <header class="flex items-center justify-between px-6 py-4 bg-white border-b border-dh-sand/30 shadow-sm">
+                    
+                    <div>
+                        @if (isset($header))
                             {{ $header }}
-                        </div>
-                    </header>
-                @endif
+                        @endif
+                    </div>
+
+                    <div class="flex items-center">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2 transition duration-150 ease-in-out border border-transparent rounded-md group focus:outline-none hover:bg-dh-light/50">
+                            
+                            <div class="hidden text-right sm:block">
+                                <div class="text-sm font-bold leading-none transition-colors text-dh-charcoal group-hover:text-dh-forest">
+                                    {{ Auth::user()->name }}
+                                </div>
+                                <div class="mt-1 text-xs font-semibold tracking-wider uppercase text-dh-sand">
+                                    {{ Auth::user()->roles->first()->name ?? 'Staff' }}
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-center w-10 h-10 font-bold transition-transform duration-300 rounded-full shadow-inner bg-dh-forest text-dh-light group-hover:scale-105">
+                                {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
+                            </div>
+                            
+                        </a>
+                    </div>
+                </header>
 
                 <main class="flex-1 overflow-x-hidden overflow-y-auto bg-dh-light p-6">
                     {{ $slot }}
