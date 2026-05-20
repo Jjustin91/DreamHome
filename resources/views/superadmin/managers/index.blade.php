@@ -40,7 +40,7 @@
                                 <td class="px-6 py-4 text-gray-600">{{ $manager->telephone_no }}</td>
                                 <td class="px-6 py-4 text-gray-600">£{{ number_format($manager->salary, 2) }}</td>
                                 <td class="px-6 py-4 text-center">
-                                    <a href="#" class="font-medium text-dh-sand hover:text-dh-forest">Edit</a>
+                                    <a href="{{ route('managers.edit', $manager->staff_no) }}" class="font-medium text-dh-sand hover:text-dh-forest">Edit</a>
                                 </td>
                             </tr>
                         @endforeach

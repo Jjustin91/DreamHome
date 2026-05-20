@@ -39,7 +39,7 @@
                                     <td class="px-6 py-4 text-gray-600">{{ $branch->postcode }}</td>
                                     <td class="px-6 py-4 text-gray-600">{{ $branch->telephone_no }}</td>
                                     <td class="px-6 py-4 text-center">
-                                        <a href="#" class="font-medium text-dh-sand hover:text-dh-forest">Edit</a>
+                                        <a href="{{ route('branches.edit', $branch->branch_no) }}" class="font-medium text-dh-sand hover:text-dh-forest">Edit</a>
                                     </td>
                                 </tr>
                             @endforeach

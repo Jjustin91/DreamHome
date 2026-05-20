@@ -40,4 +40,25 @@ class BranchController extends Controller
         // 3. Send the user back to the table with a success message
         return redirect()->route('branches.index')->with('success', 'New branch added successfully!');
     }
+
+    public function edit(Branch $branch)
+    {
+        return view('superadmin.branches.edit', compact('branch'));
+    }
+
+    public function update(Request $request, Branch $branch)
+    {
+        $validated = $request->validate([
+            'street' => 'required|string|max:255',
+            'area' => 'nullable|string|max:100',
+            'city' => 'required|string|max:100',
+            'postcode' => 'required|string|max:20',
+            'telephone_no' => 'required|string|max:20',
+            'fax_no' => 'nullable|string|max:20',
+        ]);
+
+        $branch->update($validated);
+
+        return redirect()->route('branches.index')->with('success', 'Branch updated successfully!');
+    }
 }

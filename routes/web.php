@@ -27,16 +27,20 @@ Route::get('/dashboard', function () {
 // -------------------------------------------------------------
 Route::middleware(['auth', 'role:Super Admin'])->group(function () {
     
+    // Branch Routes
     Route::get('/branches', [BranchController::class, 'index'])->name('branches.index');
-    // 1. Route to show the form
     Route::get('/branches/create', [BranchController::class, 'create'])->name('branches.create');
-    // 2. Route to accept the form submission and save to database
     Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
+    Route::get('/branches/{branch}/edit', [BranchController::class, 'edit'])->name('branches.edit');
+    Route::put('/branches/{branch}', [BranchController::class, 'update'])->name('branches.update');
     
     // Manager Routes
     Route::get('/managers', [ManagerController::class, 'index'])->name('managers.index');
     Route::get('/managers/create', [ManagerController::class, 'create'])->name('managers.create');
     Route::post('/managers', [ManagerController::class, 'store'])->name('managers.store');
+    Route::get('/managers/{manager}/edit', [ManagerController::class, 'edit'])->name('managers.edit');
+    Route::put('/managers/{manager}', [ManagerController::class, 'update'])->name('managers.update');
+    
 });
 
 // -------------------------------------------------------------

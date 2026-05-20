@@ -29,6 +29,7 @@ class ManagerController extends Controller
             'staff_no' => 'required|string|max:5|unique:staff,staff_no|unique:users,staff_no',
             'first_name' => 'required|string|max:50',
             'last_name' => 'required|string|max:50',
+            'address' => 'required|string|max:255', // <-- 1. ADD THIS LINE
             'branch_no' => 'required|exists:branches,branch_no',
             'telephone_no' => 'required|string|max:20',
             'sex' => 'required|in:M,F',
@@ -41,7 +42,7 @@ class ManagerController extends Controller
         $user = User::create([
             'staff_no' => $validated['staff_no'],
             'name' => $validated['first_name'] . ' ' . $validated['last_name'],
-            'password' => Hash::make('password123'), // Default password
+            'password' => Hash::make('password123'), 
         ]);
 
         // 2. Assign Spatie Role automatically
@@ -52,6 +53,7 @@ class ManagerController extends Controller
             'staff_no' => $validated['staff_no'],
             'first_name' => $validated['first_name'],
             'last_name' => $validated['last_name'],
+            'address' => $validated['address'], // <-- 2. ADD THIS LINE
             'branch_no' => $validated['branch_no'],
             'telephone_no' => $validated['telephone_no'],
             'sex' => $validated['sex'],
@@ -64,5 +66,36 @@ class ManagerController extends Controller
         ]);
 
         return redirect()->route('managers.index')->with('success', 'Manager assigned and system access granted.');
+    }
+
+    public function edit(Staff $manager)
+    {
+        $branches = Branch::all();
+        return view('superadmin.managers.edit', compact('manager', 'branches'));
+    }
+
+    public function update(Request $request, Staff $manager)
+    {
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:50',
+            'last_name' => 'required|string|max:50',
+            'address' => 'required|string|max:255', // <-- 1. ADD THIS LINE
+            'branch_no' => 'required|exists:branches,branch_no',
+            'telephone_no' => 'required|string|max:20',
+            'salary' => 'required|numeric',
+        ]);
+
+        // 1. Update the HR Record
+        $manager->update($validated);
+
+        // 2. Keep their User security account name in sync!
+        $user = User::where('staff_no', $manager->staff_no)->first();
+        if ($user) {
+            $user->update([
+                'name' => $validated['first_name'] . ' ' . $validated['last_name']
+            ]);
+        }
+
+        return redirect()->route('managers.index')->with('success', 'Manager profile updated.');
     }
 }

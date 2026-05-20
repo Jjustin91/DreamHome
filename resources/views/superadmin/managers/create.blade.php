@@ -24,6 +24,7 @@
                         <div>
                             <label for="staff_no" class="block text-sm font-bold tracking-wide text-dh-charcoal">Staff Number <span class="font-normal text-gray-500">(e.g. S102)</span></label>
                             <input type="text" id="staff_no" name="staff_no" value="{{ old('staff_no') }}" required class="block w-full mt-2 bg-white border-gray-300 rounded-lg shadow-sm text-dh-charcoal focus:border-dh-forest focus:ring focus:ring-dh-forest/30">
+                            @error('staff_no') <p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
@@ -31,47 +32,61 @@
                             <select id="branch_no" name="branch_no" required class="block w-full mt-2 bg-white border-gray-300 rounded-lg shadow-sm text-dh-charcoal focus:border-dh-forest focus:ring focus:ring-dh-forest/30">
                                 <option value="">Select a Branch...</option>
                                 @foreach($branches as $branch)
-                                    <option value="{{ $branch->branch_no }}">{{ $branch->branch_no }} - {{ $branch->city }}</option>
+                                    <option value="{{ $branch->branch_no }}" {{ old('branch_no') == $branch->branch_no ? 'selected' : '' }}>{{ $branch->branch_no }} - {{ $branch->city }}</option>
                                 @endforeach
                             </select>
+                            @error('branch_no') <p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="first_name" class="block text-sm font-bold tracking-wide text-dh-charcoal">First Name</label>
                             <input type="text" id="first_name" name="first_name" value="{{ old('first_name') }}" required class="block w-full mt-2 bg-white border-gray-300 rounded-lg shadow-sm text-dh-charcoal focus:border-dh-forest focus:ring focus:ring-dh-forest/30">
+                            @error('first_name') <p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="last_name" class="block text-sm font-bold tracking-wide text-dh-charcoal">Last Name</label>
                             <input type="text" id="last_name" name="last_name" value="{{ old('last_name') }}" required class="block w-full mt-2 bg-white border-gray-300 rounded-lg shadow-sm text-dh-charcoal focus:border-dh-forest focus:ring focus:ring-dh-forest/30">
+                            @error('last_name') <p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label for="address" class="block text-sm font-bold tracking-wide text-dh-charcoal">Home Address</label>
+                            <input type="text" id="address" name="address" value="{{ old('address') }}" required class="block w-full mt-2 bg-white border-gray-300 rounded-lg shadow-sm text-dh-charcoal focus:border-dh-forest focus:ring focus:ring-dh-forest/30">
+                            @error('address') <p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="sex" class="block text-sm font-bold tracking-wide text-dh-charcoal">Sex</label>
                             <select id="sex" name="sex" required class="block w-full mt-2 bg-white border-gray-300 rounded-lg shadow-sm text-dh-charcoal focus:border-dh-forest focus:ring focus:ring-dh-forest/30">
-                                <option value="M">Male</option>
-                                <option value="F">Female</option>
+                                <option value="M" {{ old('sex') == 'M' ? 'selected' : '' }}>Male</option>
+                                <option value="F" {{ old('sex') == 'F' ? 'selected' : '' }}>Female</option>
                             </select>
+                            @error('sex') <p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="date_of_birth" class="block text-sm font-bold tracking-wide text-dh-charcoal">Date of Birth</label>
                             <input type="date" id="date_of_birth" name="date_of_birth" value="{{ old('date_of_birth') }}" required class="block w-full mt-2 bg-white border-gray-300 rounded-lg shadow-sm text-dh-charcoal focus:border-dh-forest focus:ring focus:ring-dh-forest/30">
+                            @error('date_of_birth') <p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="telephone_no" class="block text-sm font-bold tracking-wide text-dh-charcoal">Telephone</label>
                             <input type="text" id="telephone_no" name="telephone_no" value="{{ old('telephone_no') }}" required class="block w-full mt-2 bg-white border-gray-300 rounded-lg shadow-sm text-dh-charcoal focus:border-dh-forest focus:ring focus:ring-dh-forest/30">
+                            @error('telephone_no') <p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="nin" class="block text-sm font-bold tracking-wide text-dh-charcoal">National Insurance No. (NIN)</label>
                             <input type="text" id="nin" name="nin" value="{{ old('nin') }}" required class="block w-full mt-2 bg-white border-gray-300 rounded-lg shadow-sm text-dh-charcoal focus:border-dh-forest focus:ring focus:ring-dh-forest/30">
+                            @error('nin') <p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="salary" class="block text-sm font-bold tracking-wide text-dh-charcoal">Starting Salary</label>
                             <input type="number" step="0.01" id="salary" name="salary" value="{{ old('salary') }}" required class="block w-full mt-2 bg-white border-gray-300 rounded-lg shadow-sm text-dh-charcoal focus:border-dh-forest focus:ring focus:ring-dh-forest/30">
+                            @error('salary') <p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p> @enderror
                         </div>
 
                     </div>
