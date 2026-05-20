@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\SuperAdmin\ManagerController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\BranchController; // <-- 1. You must import your new controller
+use App\Http\Controllers\BranchController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Branch;
 use App\Models\Staff;
 
@@ -12,14 +13,38 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    // Gather live statistics for the Super Admin
-    $stats = [
-        'total_branches' => Branch::count(),
-        'total_staff' => Staff::count(),
-        'total_managers' => Staff::where('job_title', 'Manager')->count(),
-    ];
-    
-    return view('dashboard', compact('stats'));
+    $user = Auth::user();
+
+    // ---------------------------------------------------------
+    // 1. SUPER ADMIN DASHBOARD LOGIC
+    // ---------------------------------------------------------
+    if ($user->hasRole('Super Admin')) {
+        $stats = [
+            'total_branches' => Branch::count(),
+            'total_staff' => Staff::count(),
+            'total_managers' => Staff::where('job_title', 'Manager')->count(),
+        ];
+        return view('dashboard', compact('stats'));
+    }
+
+    // ---------------------------------------------------------
+    // 2. MANAGER DASHBOARD LOGIC
+    // ---------------------------------------------------------
+    if ($user->hasRole('Manager')) {
+        // Find the Manager's HR record to see which branch they run
+        $managerProfile = Staff::with('branch')->where('staff_no', $user->staff_no)->first();
+        $branchNo = $managerProfile->branch_no;
+
+        $stats = [
+            'my_staff_count' => Staff::where('branch_no', $branchNo)->count(),
+            // We will add total properties here later!
+        ];
+        
+        return view('dashboard', compact('stats', 'managerProfile'));
+    }
+
+    // Default fallback for other roles
+    return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // -------------------------------------------------------------
