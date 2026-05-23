@@ -38,6 +38,11 @@ class StaffController extends Controller
 
     public function store(Request $request)
     {
+        // SECURITY CHECK: Managers cannot hire other Managers. Only Super Admins can do this.
+        if (auth()->user()->hasRole('Manager') && $request->job_title === 'Manager') {
+            return back()->withErrors(['job_title' => 'Security Alert: You do not have clearance to hire System Managers. Please contact a Super Admin.'])->withInput();
+        }
+
         $request->validate([
             // Staff Details
             'first_name'   => 'required|string|max:50',
@@ -73,6 +78,7 @@ class StaffController extends Controller
                 'telephone_no' => $request->telephone_no,
                 'sex'          => $request->sex,
                 'date_of_birth'=> $request->dob,
+                'date_joined'  => now()->toDateString(), // <--- FIX: Automatically sets their hire date to today!
                 'nin'          => $request->nin,
                 'job_title'    => $request->job_title,
                 'salary'       => $request->salary,
@@ -127,9 +133,10 @@ public function edit(string $id)
 
     public function update(Request $request, string $id)
     {
-        // SECURITY CHECK: Double safeguard on submission
-        if (auth()->user()->hasRole('Manager') && auth()->user()->staff_no === $id) {
-            return redirect()->route('staff.index')->with('error', 'Security Alert: Unauthorized modification attempt.');
+        // NEW SECURITY CHECK: Managers cannot promote someone else to a Manager role
+        $targetStaff = DB::table('staff')->where('staff_no', $id)->first();
+        if (auth()->user()->hasRole('Manager') && $request->job_title === 'Manager' && $targetStaff->job_title !== 'Manager') {
+            return back()->withErrors(['job_title' => 'Security Alert: You do not have clearance to promote staff to Managers.'])->withInput();
         }
 
         $request->validate([

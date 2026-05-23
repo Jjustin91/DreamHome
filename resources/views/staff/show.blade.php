@@ -32,7 +32,7 @@
                     </div>
                     <div class="p-4 border rounded-lg bg-teal-50 border-teal-100">
                         <div class="tracking-wide text-teal-600 uppercase text-xs font-bold">Annual Salary</div>
-                        <div class="mt-1 text-xl font-bold text-teal-800">₱{{ number_format($staff->salary, 2) }}</div>
+                        <div class="mt-1 text-xl font-bold text-teal-800">€{{ number_format($staff->salary, 2) }}</div>
                     </div>
                 </div>
             </div>

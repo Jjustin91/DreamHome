@@ -57,11 +57,11 @@
 
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block mb-1 text-sm font-bold text-[#C9956A]">Monthly Rent (₱) *</label>
+                        <label class="block mb-1 text-sm font-bold text-[#C9956A]">Monthly Rent (€) *</label>
                         <input type="number" step="0.01" name="monthly_rent" class="w-full rounded-lg bg-gray-50 border-gray-300 focus:ring-[#C9956A]">
                     </div>
                     <div>
-                        <label class="block mb-1 text-sm font-bold text-[#C9956A]">Deposit Required (₱) *</label>
+                        <label class="block mb-1 text-sm font-bold text-[#C9956A]">Deposit Required (€) *</label>
                         <input type="number" step="0.01" name="deposit_amount" class="w-full rounded-lg bg-gray-50 border-gray-300 focus:ring-[#C9956A]">
                     </div>
                 </div>

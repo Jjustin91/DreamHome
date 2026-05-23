@@ -38,7 +38,7 @@
                     <input type="date" name="date_advertised" class="w-full border-gray-300 rounded-lg bg-gray-50 focus:ring-[#C9956A]">
                 </div>
                 <div>
-                    <label class="block mb-2 text-sm font-bold text-teal-600">Total Cost (₱) *</label>
+                    <label class="block mb-2 text-sm font-bold text-teal-600">Total Cost (€) *</label>
                     <input type="number" step="0.01" name="cost" class="w-full border-gray-300 rounded-lg bg-gray-50 focus:ring-teal-500">
                 </div>
             </div>

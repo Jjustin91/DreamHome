@@ -77,13 +77,17 @@
                     <select name="job_title" class="w-full rounded-lg bg-gray-50 border-gray-300 focus:ring-[#C9956A]">
                         <option value="Salesperson" {{ old('job_title', $staff->job_title) == 'Salesperson' ? 'selected' : '' }}>Salesperson / Staff</option>
                         <option value="Supervisor" {{ old('job_title', $staff->job_title) == 'Supervisor' ? 'selected' : '' }}>Supervisor</option>
-                        <option value="Manager" {{ old('job_title', $staff->job_title) == 'Manager' ? 'selected' : '' }}>Manager</option>
                         <option value="Secretary" {{ old('job_title', $staff->job_title) == 'Secretary' ? 'selected' : '' }}>Secretary</option>
+
+                        {{-- If they are already a manager, show it, otherwise only Super Admins can see it to promote them --}}
+                        @if($staff->job_title == 'Manager' || auth()->user()->hasRole('Super Admin'))
+                            <option value="Manager" {{ old('job_title', $staff->job_title) == 'Manager' ? 'selected' : '' }}>Manager</option>
+                        @endif
                     </select>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block mb-1 text-sm font-bold text-[#C9956A]">Annual Salary (₱) *</label>
+                    <label class="block mb-1 text-sm font-bold text-[#C9956A]">Annual Salary (€) *</label>
                     <input type="number" step="0.01" name="salary" value="{{ old('salary', $staff->salary) }}" class="w-full rounded-lg bg-gray-50 border-gray-300 focus:ring-[#C9956A]">
                 </div>
 

@@ -69,13 +69,17 @@
                     <select name="job_title" class="w-full rounded-lg bg-gray-50 border-gray-300">
                         <option value="Salesperson">Salesperson / Staff</option>
                         <option value="Supervisor">Supervisor</option>
-                        <option value="Manager">Manager</option>
                         <option value="Secretary">Secretary</option>
+
+                        {{-- ONLY Super Admins can see this option! --}}
+                        @role('Super Admin')
+                            <option value="Manager">Manager</option>
+                        @endrole
                     </select>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block mb-1 text-sm font-bold text-[#C9956A]">Annual Salary (₱) *</label>
+                    <label class="block mb-1 text-sm font-bold text-[#C9956A]">Annual Salary (€) *</label>
                     <input type="number" name="salary" class="w-full rounded-lg bg-gray-50 border-gray-300">
                 </div>
 

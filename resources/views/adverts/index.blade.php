@@ -52,7 +52,7 @@
                     <td class="p-4 font-bold text-gray-800">{{ \Carbon\Carbon::parse($adv->date_advertised)->format('M d, Y') }}</td>
                     <td class="p-4 text-gray-700">{{ $adv->property_no }} - {{ $adv->street }}</td>
                     <td class="p-4 text-[#C9956A] font-bold">{{ $adv->newspaper_name }}</td>
-                    <td class="p-4 text-teal-700 font-bold">₱{{ number_format($adv->cost, 2) }}</td>
+                    <td class="p-4 text-teal-700 font-bold">€{{ number_format($adv->cost, 2) }}</td>
                     <td class="p-4">
                         {{-- NOTE: We use the composite key encoded with three underscores --- --}}
                         <form action="{{ route('adverts.destroy', $adv->property_no . '___' . $adv->newspaper_name . '___' . $adv->date_advertised) }}" method="POST" onsubmit="return confirm('Delete this advert record?')">

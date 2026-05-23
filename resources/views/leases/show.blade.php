@@ -43,7 +43,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Monthly Rent</p>
-                    <p class="font-bold text-[#C9956A]">₱{{ number_format($lease->monthly_rent, 2) }}</p>
+                    <p class="font-bold text-[#C9956A]">€{{ number_format($lease->monthly_rent, 2) }}</p>
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Payment Method</p>
