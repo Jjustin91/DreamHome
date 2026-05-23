@@ -10,6 +10,8 @@ use App\Http\Controllers\PropertyInspectionController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\LeaseController;
+use App\Http\Controllers\NewspaperController;
+use App\Http\Controllers\AdvertController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Branch;
@@ -21,37 +23,49 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
+    
+    // Fetch the HR record to link the logged-in user to their specific branch/staff data
+    $staffProfile = \App\Models\Staff::where('staff_no', $user->staff_no)->first();
+    
+    $data = ['user' => $user, 'profile' => $staffProfile];
 
-    // ---------------------------------------------------------
-    // 1. SUPER ADMIN DASHBOARD LOGIC
-    // ---------------------------------------------------------
     if ($user->hasRole('Super Admin')) {
-        $stats = [
-            'total_branches' => Branch::count(),
-            'total_staff' => Staff::count(),
-            'total_managers' => Staff::where('job_title', 'Manager')->count(),
+        $data['stats'] = [
+            'branches' => \Illuminate\Support\Facades\DB::table('branches')->count(),
+            'staff' => \Illuminate\Support\Facades\DB::table('staff')->count(),
+            'properties' => \Illuminate\Support\Facades\DB::table('property_for_rents')->count(),
+            'leases' => \Illuminate\Support\Facades\DB::table('lease_agreements')->count(),
         ];
-        return view('dashboard', compact('stats'));
+    } 
+    elseif ($user->hasRole('Manager') && $staffProfile) {
+        $branchNo = $staffProfile->branch_no;
+        $data['stats'] = [
+            'branch_no' => $branchNo,
+            'staff' => \Illuminate\Support\Facades\DB::table('staff')->where('branch_no', $branchNo)->count(),
+            'available_props' => \Illuminate\Support\Facades\DB::table('property_for_rents')->where('branch_no', $branchNo)->where('status', 'Available')->count(),
+            'rented_props' => \Illuminate\Support\Facades\DB::table('property_for_rents')->where('branch_no', $branchNo)->where('status', 'Rented')->count(),
+        ];
+    } 
+    elseif ($user->hasRole('Supervisor')) {
+        $data['stats'] = [
+            'adverts' => \Illuminate\Support\Facades\DB::table('property_adverts')->count(),
+            'inspections' => \Illuminate\Support\Facades\DB::table('property_inspections')->count(),
+            'viewings' => \Illuminate\Support\Facades\DB::table('property_viewings')->count(),
+        ];
+    } 
+    else {
+        // Standard Staff / Salesperson Dashboard
+        if ($staffProfile) {
+            $data['my_viewings'] = \Illuminate\Support\Facades\DB::table('property_viewings')
+                ->join('property_for_rents', 'property_viewings.property_no', '=', 'property_for_rents.property_no')
+                ->where('property_viewings.staff_no', $staffProfile->staff_no)
+                ->where('viewing_date', '>=', now()->toDateString())
+                ->orderBy('viewing_date', 'asc')
+                ->get();
+        }
     }
 
-    // ---------------------------------------------------------
-    // 2. MANAGER DASHBOARD LOGIC
-    // ---------------------------------------------------------
-    if ($user->hasRole('Manager')) {
-        // Find the Manager's HR record to see which branch they run
-        $managerProfile = Staff::with('branch')->where('staff_no', $user->staff_no)->first();
-        $branchNo = $managerProfile->branch_no;
-
-        $stats = [
-            'my_staff_count' => Staff::where('branch_no', $branchNo)->count(),
-            // We will add total properties here later!
-        ];
-        
-        return view('dashboard', compact('stats', 'managerProfile'));
-    }
-
-    // Default fallback for other roles
-    return view('dashboard');
+    return view('dashboard', $data);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
@@ -81,6 +95,7 @@ Route::middleware(['auth', 'role:Super Admin'])->group(function () {
 // Here is your new Staff Management route!
 Route::middleware(['auth', 'role:Super Admin|Manager'])->group(function () {
     Route::resource('staff', StaffController::class);
+    Route::resource('newspapers', NewspaperController::class)->except(['show', 'edit', 'update']);
 });
 
 
@@ -106,6 +121,7 @@ Route::middleware(['auth', 'role:Super Admin|Manager|Supervisor'])->group(functi
 Route::middleware('auth')->group(function () {
     Route::resource('viewings', PropertyViewingController::class)->except(['show']);
     Route::resource('inspections', PropertyInspectionController::class)->except(['show', 'edit', 'update']);
+    Route::resource('adverts', AdvertController::class)->except(['show', 'edit', 'update']);
 });
 
 // -------------------------------------------------------------

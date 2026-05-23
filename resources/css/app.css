@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* DreamHome Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f8fafc; /* Very light gray to blend with the background */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #C9956A; /* DreamHome Sand */
+    border-radius: 5px;
+    border: 2px solid #f8fafc; /* Adds a nice inner padding effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5C5047; /* DreamHome Charcoal */
+}
+
+/* Firefox Support */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #C9956A #f8fafc;
+}
