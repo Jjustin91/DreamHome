@@ -20,7 +20,6 @@ return new class extends Migration
 
             // Composite Primary Key
             $table->primary(['property_no', 'inspection_date']);
-            
             $table->foreign('property_no')->references('property_no')->on('property_for_rents');
             $table->foreign('staff_no')->references('staff_no')->on('staff');
         });

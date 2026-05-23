@@ -46,13 +46,11 @@
                 </a>
             @endrole
 
-            {{-- UPDATED: Now allows both Super Admin and Manager to view Branch Management --}}
             @hasanyrole('Super Admin|Manager')
                 <div class="pt-4 pb-1">
                     <p class="px-3 text-xs font-semibold tracking-wider text-dh-sand uppercase">Branch Management</p>
                 </div>
                 
-                {{-- UPDATED: Changed href to route('staff.index') and fixed active route logic --}}
                 <a class="flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg {{ request()->routeIs('staff.*') ? 'bg-dh-forest text-dh-light' : 'text-dh-light/80 hover:bg-dh-forest hover:text-dh-light' }}" href="{{ route('staff.index') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 {{ request()->routeIs('staff.*') ? 'text-dh-sand' : '' }}">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
@@ -70,7 +68,7 @@
 
             @hasanyrole('Super Admin|Manager|Supervisor')
                 <div class="pt-4 pb-1">
-                    <p class="px-3 text-xs font-semibold tracking-wider text-dh-sand uppercase">Operations</p>
+                    <p class="px-3 text-xs font-semibold tracking-wider text-dh-sand uppercase">Admin Operations</p>
                 </div>
                 
                 <a class="flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg {{ request()->routeIs('properties.*') ? 'bg-dh-forest text-dh-light' : 'text-dh-light/80 hover:bg-dh-forest hover:text-dh-light' }}" href="{{ route('properties.index') }}">
@@ -87,7 +85,6 @@
                     <span class="mx-2 text-sm font-medium">Owners</span>
                 </a>
 
-                {{-- UPDATED: Changed href to route('clients.index') --}}
                 <a class="flex items-center px-3 py-2 mt-2 transition-colors duration-300 transform rounded-lg {{ request()->routeIs('clients.*') ? 'bg-dh-forest text-dh-light' : 'text-dh-light/80 hover:bg-dh-forest hover:text-dh-light' }}" href="{{ route('clients.index') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 {{ request()->routeIs('clients.*') ? 'text-dh-sand' : '' }}">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -95,7 +92,6 @@
                     <span class="mx-2 text-sm font-medium">Clients & Renters</span>
                 </a>
                 
-                {{-- UPDATED: Changed href to route('leases.index') (If you have created it) --}}
                 <a class="flex items-center px-3 py-2 mt-2 transition-colors duration-300 transform rounded-lg {{ request()->routeIs('leases.*') ? 'bg-dh-forest text-dh-light' : 'text-dh-light/80 hover:bg-dh-forest hover:text-dh-light' }}" href="{{ route('leases.index') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 {{ request()->routeIs('leases.*') ? 'text-dh-sand' : '' }}">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -103,6 +99,29 @@
                     <span class="mx-2 text-sm font-medium">Lease Agreements</span>
                 </a>
             @endhasanyrole
+
+            {{-- ------------------------------------------------------------- --}}
+            {{-- MODULE 3: ALL STAFF OPERATIONS (Unrestricted)                   --}}
+            {{-- ------------------------------------------------------------- --}}
+            <div class="pt-4 pb-1">
+                <p class="px-3 text-xs font-semibold tracking-wider text-dh-sand uppercase">Field Operations</p>
+            </div>
+            
+            <a class="flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg {{ request()->routeIs('viewings.*') ? 'bg-dh-forest text-dh-light' : 'text-dh-light/80 hover:bg-dh-forest hover:text-dh-light' }}" href="{{ route('viewings.index') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 {{ request()->routeIs('viewings.*') ? 'text-dh-sand' : '' }}">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span class="mx-2 text-sm font-medium">Property Viewings</span>
+            </a>
+
+            <a class="flex items-center px-3 py-2 mt-2 transition-colors duration-300 transform rounded-lg {{ request()->routeIs('inspections.*') ? 'bg-dh-forest text-dh-light' : 'text-dh-light/80 hover:bg-dh-forest hover:text-dh-light' }}" href="{{ route('inspections.index') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 {{ request()->routeIs('inspections.*') ? 'text-dh-sand' : '' }}">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                </svg>
+                <span class="mx-2 text-sm font-medium">Inspections</span>
+            </a>
+
         </nav>
 
         <div class="mt-8">

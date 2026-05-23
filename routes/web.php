@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\PropertyViewingController;
+use App\Http\Controllers\PropertyInspectionController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\LeaseController;
@@ -97,7 +99,14 @@ Route::middleware(['auth', 'role:Super Admin|Manager|Supervisor'])->group(functi
     // Module 4: Lease Management
     Route::resource('leases', LeaseController::class);
 });
-
+// -------------------------------------------------------------
+// ALL STAFF OPERATIONS (Viewings & Inspections)
+// -------------------------------------------------------------
+// Accessible by anyone who is logged into the system
+Route::middleware('auth')->group(function () {
+    Route::resource('viewings', PropertyViewingController::class)->except(['show']);
+    Route::resource('inspections', PropertyInspectionController::class)->except(['show', 'edit', 'update']);
+});
 
 // -------------------------------------------------------------
 // DEFAULT BREEZE PROFILE ROUTES
