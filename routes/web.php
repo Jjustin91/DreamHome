@@ -3,6 +3,10 @@
 use App\Http\Controllers\SuperAdmin\ManagerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\LeaseController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Branch;
@@ -66,6 +70,46 @@ Route::middleware(['auth', 'role:Super Admin'])->group(function () {
     Route::get('/managers/{manager}/edit', [ManagerController::class, 'edit'])->name('managers.edit');
     Route::put('/managers/{manager}', [ManagerController::class, 'update'])->name('managers.update');
     
+});
+
+// Property Management 
+Route::middleware('auth')->group(function () {
+    Route::get('/properties/create', [PropertyController::class, 'create'])->name('properties.create');
+    Route::resource('properties', PropertyController::class)->except(['create']);
+});
+
+// Owner Management
+Route::middleware('auth')->group(function () {
+    Route::resource('owners', OwnerController::class);
+});
+
+// -------------------------------------------------------------
+// OPERATIONS ROUTES (Properties & Owners from Zyra)
+// -------------------------------------------------------------
+// Spatie middleware allows you to pass multiple roles separated by a pipe '|'
+Route::middleware(['auth', 'role:Supervisor|Manager|Super Admin'])->group(function () {
+    
+    // Property Management 
+    Route::get('/properties/create', [PropertyController::class, 'create'])->name('properties.create');
+    Route::resource('properties', PropertyController::class)->except(['create']);
+    
+    // Owner Management
+    Route::resource('owners', OwnerController::class);
+    
+});
+
+// OPERATIONS ROUTES (Shared by Managers and Supervisors)
+Route::middleware(['auth', 'role:Super Admin|Manager|Supervisor'])->group(function () {
+    
+    Route::get('/properties/create', [PropertyController::class, 'create'])->name('properties.create');
+    Route::resource('properties', PropertyController::class)->except(['create']);
+    
+    Route::resource('owners', OwnerController::class);
+    
+    // Add the Lease routes here so they inherit the shared roles
+    Route::resource('leases', LeaseController::class);
+    // Client / Prospective Renter Management
+    Route::resource('clients', ClientController::class);
 });
 
 // -------------------------------------------------------------
