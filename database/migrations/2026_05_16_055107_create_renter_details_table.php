@@ -37,6 +37,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('renter_details');
+        // FIXED: This must drop property_for_rents, NOT renter_details
+        Schema::dropIfExists('property_for_rents');
     }
 };

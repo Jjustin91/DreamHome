@@ -1,111 +1,79 @@
-{{-- resources/views/clients/show.blade.php --}}
-@extends('layouts.app')
-@section('title', 'Client – ' . $client->first_name . ' ' . $client->last_name)
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="text-xl font-semibold leading-tight text-gray-800">
+            Client Details
+        </h2>
+    </x-slot>
 
-@section('content')
-
-<div style="max-width: 1500px; border-radius: 16px; padding: 28px;">
-
-    {{-- Title + Edit + Back --}}
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-        <h2 style="font-size: 24px; font-weight: 600; color: #3d2f27; margin: 0;">Client Details</h2>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <a href="{{ route('clients.index') }}"
-               style="font-size: 12px; font-weight: 500; color: #7a6a60; text-decoration: none;"
-               onmouseover="this.style.color='#3d2f27'"
-               onmouseout="this.style.color='#7a6a60'">← Back to Clients</a>
-            <a href="{{ route('clients.edit', $client->renter_no) }}"
-               style="background-color: #4a7c6b; color: #fff; font-size: 12px; font-weight: 500; padding: 6px 18px; border-radius: 999px; text-decoration: none;"
-               onmouseover="this.style.backgroundColor='#3a6358'"
-               onmouseout="this.style.backgroundColor='#4a7c6b'">Edit</a>
-        </div>
+    <div class="mb-6">
+        <a href="{{ route('clients.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900">
+            ← Back to Clients List
+        </a>
     </div>
 
-    {{-- Card body: white left + dark right --}}
-    <div style="display: flex; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.13);">
-
-        {{-- LEFT: white panel --}}
-        <div style="width: 500px; flex-shrink: 0; background: #ffffff; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
-
-            {{-- Image placeholder --}}
-            <div style="width: 100%; height: 250px; background: #e5e0da; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #9e8e80; font-size: 12px; font-weight: 500; letter-spacing: 0.05em;">
-                IMAGE
+    <div class="grid grid-cols-3 gap-6">
+        {{-- Left: Profile Card --}}
+        <div class="flex flex-col items-center col-span-1 p-6 bg-white border border-gray-200 shadow-sm rounded-xl">
+            <div class="flex items-center justify-center w-24 h-24 mb-4 text-3xl font-bold text-white rounded-full bg-[#C9956A] shadow-md">
+                {{ strtoupper(substr($client->first_name, 0, 1)) }}{{ strtoupper(substr($client->last_name, 0, 1)) }}
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">{{ $client->first_name }} {{ $client->last_name }}</h3>
+            <div class="mt-1 text-sm font-bold text-[#4F7C72]">Client ID: {{ $client->renter_no }}</div>
+            
+            <div class="w-full mt-6 space-y-4 text-sm">
+                <div><strong class="block text-xs uppercase text-gray-400">Telephone</strong> <span class="font-semibold text-gray-700">{{ $client->telephone_no }}</span></div>
+                <div><strong class="block text-xs uppercase text-gray-400">Address</strong> <span class="text-gray-700">{{ $client->address }}</span></div>
+                <div><strong class="block text-xs uppercase text-gray-400">Date Registered</strong> <span class="text-gray-700">{{ $client->date ?? 'N/A' }}</span></div>
             </div>
 
-            {{-- Client info --}}
-            <div style="font-size: 13px; display: flex; flex-direction: column; gap: 8px;">
-                <div style="display: flex; gap: 8px;">
-                    <span style="color: #7a6a60; width: 76px; flex-shrink: 0;">Renter ID:</span>
-                    <span style="font-weight: 600; color: #2d1f1a; text-decoration: underline; text-underline-offset: 2px;">{{ $client->renter_no }}</span>
+            @hasanyrole('Super Admin|Manager|Supervisor')
+                <div class="flex flex-col w-full gap-3 mt-8">
+                    <a href="{{ route('clients.edit', $client->renter_no) }}" class="w-full py-2 text-center text-white bg-[#C9956A] rounded-lg font-semibold hover:bg-[#b07d55] transition">Edit Client Info</a>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <span style="color: #7a6a60; width: 76px; flex-shrink: 0;">First Name:</span>
-                    <span style="font-weight: 600; color: #2d1f1a; text-decoration: underline; text-underline-offset: 2px;">{{ $client->first_name }}</span>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <span style="color: #7a6a60; width: 76px; flex-shrink: 0;">Last Name:</span>
-                    <span style="font-weight: 600; color: #2d1f1a; text-decoration: underline; text-underline-offset: 2px;">{{ $client->last_name }}</span>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <span style="color: #7a6a60; width: 76px; flex-shrink: 0;">Address:</span>
-                    <span style="font-weight: 600; color: #2d1f1a; text-decoration: underline; text-underline-offset: 2px; line-height: 1.5;">{{ $client->address }}</span>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <span style="color: #7a6a60; width: 76px; flex-shrink: 0;">Tele Num:</span>
-                    <span style="font-weight: 600; color: #2d1f1a; text-decoration: underline; text-underline-offset: 2px;">{{ $client->telephone_no }}</span>
-                </div>
-            </div>
+            @endhasanyrole
         </div>
 
-        {{-- RIGHT: dark panel --}}
-        <div style="flex: 1; background: #4a3f35; padding: 24px; display: flex; flex-direction: column; gap: 14px; color: #e8ddd5;">
-
-            {{-- Branch & Staff --}}
-            <div style="font-size: 13px; display: flex; flex-direction: column; gap: 8px;">
-                <div style="display: flex; gap: 8px;">
-                    <span style="color: #b0a090; width: 100px; flex-shrink: 0;">Branch:</span>
-                    <span style="font-weight: 600; color: #fff; text-decoration: underline; text-underline-offset: 2px;">{{ $client->branch_no ?? '—' }}</span>
+        {{-- Right: Requirements & Assignments --}}
+        <div class="flex flex-col col-span-2 gap-6">
+            
+            <div class="p-6 bg-white border border-gray-200 shadow-sm rounded-xl">
+                <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">Rental Requirements</h3>
+                
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div class="p-4 rounded-lg bg-gray-50 border border-gray-100">
+                        <div class="text-xs font-bold text-gray-400 uppercase tracking-wide">Preferred Property</div>
+                        <div class="mt-1 text-xl font-bold text-gray-800">{{ $client->pref_property ?? 'Any' }}</div>
+                    </div>
+                    <div class="p-4 rounded-lg bg-teal-50 border border-teal-100">
+                        <div class="text-xs font-bold text-teal-600 uppercase tracking-wide">Max Budget (Monthly)</div>
+                        <div class="mt-1 text-xl font-bold text-teal-800">₱{{ number_format($client->max_rent, 2) }}</div>
+                    </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <span style="color: #b0a090; width: 100px; flex-shrink: 0;">Staff Assigned:</span>
-                    <span style="font-weight: 600; color: #fff; text-decoration: underline; text-underline-offset: 2px;">{{ $client->staff_no ?? '—' }}</span>
-                </div>
-            </div>
 
-            <div style="border-top: 1px solid #6a5a50;"></div>
-
-            {{-- Preference --}}
-            <div>
-                <p style="font-size: 14px; font-weight: 600; color: #e8ddd5; margin: 0 0 12px 0;">Preference</p>
-                <div style="font-size: 13px; display: flex; flex-direction: column; gap: 8px;">
-                    <div style="display: flex; gap: 8px;">
-                        <span style="color: #b0a090; width: 100px; flex-shrink: 0;">Property Type:</span>
-                        <span style="font-weight: 600; color: #fff; text-decoration: underline; text-underline-offset: 2px;">{{ $client->pref_property ?? '—' }}</span>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <span style="color: #b0a090; width: 100px; flex-shrink: 0;">Maximum Rent:</span>
-                        <span style="font-weight: 600; color: #fff; text-decoration: underline; text-underline-offset: 2px;">
-                            {{ $client->max_rent ? '$' . number_format($client->max_rent, 2) : '—' }}
-                        </span>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <span style="color: #b0a090; width: 100px; flex-shrink: 0;">Date Registered:</span>
-                        <span style="font-weight: 600; color: #fff; text-decoration: underline; text-underline-offset: 2px;">
-                            {{ $client->date ? \Carbon\Carbon::parse($client->date)->format('Y-m-d') : '—' }}
-                        </span>
-                    </div>
-                    <div>
-                        <span style="color: #b0a090; display: block; margin-bottom: 6px;">Comments:</span>
-                        <div style="background: #f5f0eb; border-radius: 8px; padding: 10px 14px; color: #4a3f35; font-size: 13px; min-height: 64px; line-height: 1.6;">
-                            {{ $client->comments ?? '' }}
+                @if($client->comments)
+                    <div class="mt-4">
+                        <label class="block mb-2 text-xs font-bold tracking-wide text-gray-400 uppercase">Special Requirements / Comments</label>
+                        <div class="p-4 text-sm text-gray-700 bg-gray-50 rounded-lg italic border border-gray-200">
+                            "{{ $client->comments }}"
                         </div>
                     </div>
+                @endif
+            </div>
+
+            <div class="p-6 bg-white border border-gray-200 shadow-sm rounded-xl">
+                <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">Assignment Details</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="block text-xs font-bold text-gray-400 uppercase tracking-wide">Registering Branch</span>
+                        <span class="font-semibold text-gray-700">{{ $client->branch_no }}</span>
+                    </div>
+                    <div>
+                        <span class="block text-xs font-bold text-gray-400 uppercase tracking-wide">Assigned Agent / Staff</span>
+                        <span class="font-semibold text-gray-700">{{ $client->staff_no }}</span>
+                    </div>
                 </div>
             </div>
 
         </div>
     </div>
-
-</div>
-
-@endsection
+</x-app-layout>

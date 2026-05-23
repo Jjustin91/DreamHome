@@ -2,158 +2,114 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RenterDetails as Client;
-use App\Models\Branch;
-use App\Models\Staff;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
-    /** Client Records list */
     public function index(Request $request)
     {
-        $allowed = ['renter_no', 'first_name', 'branch_no', 'staff_no', 'pref_property', 'max_rent'];
-        $sortBy  = in_array($request->sort_by, $allowed) ? $request->sort_by : 'renter_no';
-        $sortDir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+        $query = DB::table('renter_details');
 
-        $clients = Client::query()
-            ->when($request->search, fn($q, $s) =>
-                $q->where('first_name', 'like', "%$s%")
-                ->orWhere('last_name',  'like', "%$s%")
-                ->orWhere('renter_no',  'like', "%$s%")
-            )
-            ->orderBy($sortBy, $sortDir)
-            ->paginate(15)
-            ->withQueryString();
+        // Handle Search
+        if ($s = $request->search) {
+            $query->where(function($q) use ($s) {
+                $q->where('first_name', 'ilike', "%$s%")
+                  ->orWhere('last_name', 'ilike', "%$s%")
+                  ->orWhere('renter_no', 'ilike', "%$s%")
+                  ->orWhere('branch_no', 'ilike', "%$s%");
+            });
+        }
 
+        // Handle Filter
+        if ($p = $request->pref_property) {
+            $query->where('pref_property', $p);
+        }
+
+        $clients = $query->orderBy('renter_no')->paginate(10)->withQueryString();
+        
         return view('clients.index', compact('clients'));
-    }
-
-    /** Client Details / Branch / Staff tabs */
-    public function show(Client $client)
-    {
-        $branch = Branch::orderBy('branch_no')->get();
-
-        $staffList = Staff::where('branch_no', $client->branch_no)
-                          ->where('job_title', 'Salesperson')
-                          ->withCount('renters')
-                          ->get();
-
-        $branchProperties = \App\Models\PropertyForRent::where('branch_no', $client->branch_no)
-                                ->selectRaw('type_of_property as type, count(*) as count')
-                                ->groupBy('type_of_property')
-                                ->get()
-                                ->map(fn($p) => ['type' => $p->type, 'count' => $p->count]);
-
-        return view('clients.show', compact('client', 'branch', 'staffList', 'branchProperties'));
     }
 
     public function create()
     {
-        $branch    = Branch::all();
-        $staffList = collect(); // empty — will be loaded via AJAX based on branch
+        // Spatie Role Check
+        if (!auth()->user()->hasAnyRole(['Super Admin', 'Manager', 'Supervisor'])) {
+            return redirect()->route('clients.index')->with('error', 'Unauthorized.');
+        }
 
-        return view('clients.create', compact('branch', 'staffList'));
+        // THIS FIXES THE ERROR: Fetch branches and active staff for the dropdowns
+        $branches = DB::table('branches')->orderBy('branch_no')->get();
+        $staff = DB::table('staff')->whereNull('end_date')->orderBy('last_name')->get();
+
+        return view('clients.create', compact('branches', 'staff'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'renter_no'     => 'required|string|max:10|unique:renter_details,renter_no',
-            'first_name'    => 'required|string|max:255',
-            'last_name'     => 'required|string|max:255',
-            'address'       => 'required|string|max:255',
-            'telephone_no'  => 'required|string|max:50',
-            'pref_property' => 'required|in:Flat,House,Studio,Bungalow',
-            'max_rent'      => 'required|numeric|min:0',
-            'date'          => 'required|date',
-            'branch_no'     => 'required|exists:branch,branch_no',
-            'staff_no'      => 'required|exists:staff,staff_no',
-            'photo'         => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        $data = $request->validate([
+            'first_name'    => 'required|string|max:50',
+            'last_name'     => 'required|string|max:50',
+            'telephone_no'  => 'required|string|max:20',
+            'address'       => 'required|string|max:250',
+            'pref_property' => 'nullable|string|max:50',
+            'max_rent'      => 'nullable|numeric|min:0',
             'comments'      => 'nullable|string',
+            'branch_no'     => 'required|string|exists:branches,branch_no',
+            'staff_no'      => 'required|string|exists:staff,staff_no',
         ]);
 
-        $data = $request->except('photo');
+        // Generate Client ID (e.g., CR001, CR002)
+        $last = DB::table('renter_details')->orderBy('renter_no', 'desc')->first();
+        $num = $last ? ((int) preg_replace('/\D/', '', $last->renter_no)) + 1 : 1;
+        $data['renter_no'] = 'CR' . str_pad($num, 3, '0', STR_PAD_LEFT);
+        
+        // Stamp the registration date
+        $data['date'] = now()->toDateString();
 
-        if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')->store('clients', 'public');
-        }
-
-        Client::create($data);
+        DB::table('renter_details')->insert($data);
 
         return redirect()->route('clients.index')
-                         ->with('success', 'Client record created successfully.');
+            ->with('success', 'Client ' . $data['first_name'] . ' ' . $data['last_name'] . ' registered successfully.');
     }
 
-    public function getStaffByBranch(Request $request)
+    public function show(string $id)
     {
-        $staff = Staff::where('job_title', 'Salesperson')
-                      ->where('branch_no', $request->branch_no)
-                      ->withCount('renters')
-                      ->get(['staff_no', 'first_name', 'last_name', 'sex', 'job_title']);
+        $client = DB::table('renter_details')->where('renter_no', $id)->first();
+        abort_if(!$client, 404);
 
-        return response()->json($staff);
+        return view('clients.show', compact('client'));
     }
 
-    public function edit(Client $client)
+    public function edit(string $id)
     {
+        $client = DB::table('renter_details')->where('renter_no', $id)->first();
+        abort_if(!$client, 404);
+
         return view('clients.edit', compact('client'));
     }
 
-    public function update(Request $request, Client $client)
+    public function update(Request $request, string $id)
     {
         $data = $request->validate([
             'first_name'    => 'required|string|max:50',
             'last_name'     => 'required|string|max:50',
-            'address'       => 'required|string|max:250',
             'telephone_no'  => 'required|string|max:20',
+            'address'       => 'required|string|max:250',
             'pref_property' => 'nullable|string|max:50',
-            'max_rent'      => 'nullable|numeric',
-            'date'          => 'nullable|date',
+            'max_rent'      => 'nullable|numeric|min:0',
             'comments'      => 'nullable|string',
         ]);
 
-        $client->update($data);
+        DB::table('renter_details')->where('renter_no', $id)->update($data);
 
-        return redirect()->route('clients.show', $client)->with('success', 'Client updated.');
+        return redirect()->route('clients.index')->with('success', 'Client details updated successfully.');
     }
 
-    public function destroy(Client $client)
+    public function destroy(string $id)
     {
-        $client->delete();
-        return redirect()->route('clients.index')->with('success', 'Client deleted.');
-    }
+        DB::table('renter_details')->where('renter_no', $id)->delete();
 
-    /** PATCH: save branch assignment (Tab 2) */
-    public function assignBranch(Request $request, Client $client)
-    {
-        $request->validate([
-            'branch_no' => 'required|exists:branch,branch_no',
-        ]);
-
-        $client->update([
-            'branch_no' => $request->branch_no,
-            'staff_no'  => null, // reset staff when branch changes
-        ]);
-
-        return redirect()->route('clients.show', $client)
-            ->with('success', 'Branch assigned.')
-            ->withFragment('branch');
-    }
-
-    /** PATCH: save staff assignment (Tab 3) */
-    public function assignStaff(Request $request, Client $client)
-    {
-        $request->validate([
-            'staff_no' => 'required|exists:staff,staff_no',
-        ]);
-
-        $client->update([
-            'staff_no' => $request->staff_no,
-        ]);
-
-        return redirect()->route('clients.show', $client)
-            ->with('success', 'Staff assigned.')
-            ->withFragment('staff');
+        return redirect()->route('clients.index')->with('success', 'Client record permanently deleted.');
     }
 }

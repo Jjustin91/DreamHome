@@ -1,100 +1,98 @@
-{{-- resources/views/clients/edit.blade.php --}}
-@extends('layouts.app')
-@section('title', 'Edit Client – ' . $client->first_name)
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="text-xl font-semibold leading-tight text-gray-800">
+            Edit Client Profile
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="max-w-2xl">
-    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <div class="px-6 py-5 border-b border-stone-100 flex items-center justify-between">
-            <a href="{{ route('clients.index', $client->renter_no) }}"
-               class="text-21 text-stone-500 hover:text-stone-800">
-                ← Back to Details
-            </a>
+    <form method="POST" action="{{ route('clients.update', $client->renter_no) }}">
+        @csrf @method('PUT')
+
+        <div class="flex items-center justify-between mb-6">
+            <div class="text-sm text-gray-600">Editing Client: <strong class="text-[#C9956A]">{{ $client->renter_no }}</strong></div>
+            <div class="flex gap-3">
+                <a href="{{ route('clients.index') }}" class="px-4 py-2 font-semibold text-red-700 bg-white border border-red-300 rounded-full hover:bg-red-50">Cancel</a>
+                <button type="submit" class="px-4 py-2 font-semibold text-white rounded-full bg-[#C9956A] hover:bg-[#b07d55]">Update Client</button>
+            </div>
         </div>
 
-        <form method="POST" action="{{ route('clients.update', $client->renter_no) }}" class="p-6 space-y-5">
-            @csrf @method('PUT')
-
-            {{-- Renter No is read-only on edit --}}
-            <div>
-                <label class="block text-sm font-medium text-stone-700 mb-1">Renter No</label>
-                <input type="text" value="{{ $client->renter_no }}" disabled
-                    class="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm bg-stone-50 text-stone-400 cursor-not-allowed">
+        @if ($errors->any())
+            <div class="p-4 mb-6 text-red-800 bg-red-100 border border-red-200 rounded-lg">
+                <ul class="pl-5 list-disc text-sm">
+                    @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
+                </ul>
             </div>
+        @endif
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-stone-700 mb-1">First Name <span class="text-red-400">*</span></label>
-                    <input type="text" name="first_name" value="{{ old('first_name', $client->first_name) }}" maxlength="50"
-                        class="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c9996b]/40 focus:border-[#c9996b] @error('first_name') border-red-300 @enderror">
-                    @error('first_name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+        <div class="grid grid-cols-2 gap-6">
+            {{-- Left: Personal Info --}}
+            <div class="p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
+                <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">Personal Information</h3>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block mb-1 text-sm font-semibold text-gray-600">First Name *</label>
+                        <input type="text" name="first_name" value="{{ old('first_name', $client->first_name) }}" class="w-full border-gray-300 rounded-lg bg-gray-50 focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-semibold text-gray-600">Last Name *</label>
+                        <input type="text" name="last_name" value="{{ old('last_name', $client->last_name) }}" class="w-full border-gray-300 rounded-lg bg-gray-50 focus:border-teal-500">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-stone-700 mb-1">Last Name <span class="text-red-400">*</span></label>
-                    <input type="text" name="last_name" value="{{ old('last_name', $client->last_name) }}" maxlength="50"
-                        class="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c9996b]/40 focus:border-[#c9996b] @error('last_name') border-red-300 @enderror">
-                    @error('last_name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+
+                <div class="mb-4">
+                    <label class="block mb-1 text-sm font-semibold text-gray-600">Telephone Number *</label>
+                    <input type="text" name="telephone_no" value="{{ old('telephone_no', $client->telephone_no) }}" class="w-full border-gray-300 rounded-lg bg-gray-50 focus:border-teal-500">
                 </div>
-            </div>
 
-            <div>
-                <label class="block text-sm font-medium text-stone-700 mb-1">Address <span class="text-red-400">*</span></label>
-                <input type="text" name="address" value="{{ old('address', $client->address) }}" maxlength="250"
-                    class="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c9996b]/40 focus:border-[#c9996b] @error('address') border-red-300 @enderror">
-                @error('address')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-stone-700 mb-1">Telephone No <span class="text-red-400">*</span></label>
-                <input type="text" name="telephone_no" value="{{ old('telephone_no', $client->telephone_no) }}" maxlength="20"
-                    class="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c9996b]/40 focus:border-[#c9996b] @error('telephone_no') border-red-300 @enderror">
-                @error('telephone_no')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-stone-700 mb-1">Property Preference</label>
-                    <select name="pref_property"
-                        class="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c9996b]/40 focus:border-[#c9996b]">
-                        <option value="">-- None --</option>
-                        @foreach(['Flat','House','Bungalow','Apartment','Villa'] as $type)
-                        <option value="{{ $type }}" {{ old('pref_property', $client->pref_property) == $type ? 'selected' : '' }}>
-                            {{ $type }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-stone-700 mb-1">Maximum Rent</label>
-                    <input type="number" name="max_rent" value="{{ old('max_rent', $client->max_rent) }}" step="0.01" min="0"
-                        class="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c9996b]/40 focus:border-[#c9996b]">
+                <div class="mb-4">
+                    <label class="block mb-1 text-sm font-semibold text-gray-600">Current Address *</label>
+                    <textarea name="address" rows="3" class="w-full border-gray-300 rounded-lg bg-gray-50 focus:border-teal-500">{{ old('address', $client->address) }}</textarea>
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-stone-700 mb-1">Date Registered</label>
-                <input type="date" name="date" value="{{ old('date', $client->date?->format('Y-m-d')) }}"
-                    class="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c9996b]/40 focus:border-[#c9996b]">
-            </div>
+            {{-- Right: Requirements & Assignments --}}
+            <div class="flex flex-col gap-6">
+                <div class="p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
+                    <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">Rental Requirements</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block mb-1 text-sm font-semibold text-gray-600">Preferred Property</label>
+                            <select name="pref_property" class="w-full border-gray-300 rounded-lg bg-gray-50 focus:border-teal-500">
+                                <option value="">Any</option>
+                                <option value="Flat" {{ old('pref_property', $client->pref_property) == 'Flat' ? 'selected' : '' }}>Flat</option>
+                                <option value="House" {{ old('pref_property', $client->pref_property) == 'House' ? 'selected' : '' }}>House</option>
+                                <option value="Studio" {{ old('pref_property', $client->pref_property) == 'Studio' ? 'selected' : '' }}>Studio</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-sm font-semibold text-[#C9956A]">Max Rent Budget (₱)</label>
+                            <input type="number" step="0.01" name="max_rent" value="{{ old('max_rent', $client->max_rent) }}" class="w-full border-gray-300 rounded-lg bg-gray-50 focus:border-teal-500">
+                        </div>
+                    </div>
 
-            <div>
-                <label class="block text-sm font-medium text-stone-700 mb-1">Comments <span class="text-red-400">*</span></label>
-                <input type="text" name="comments" value="{{ old('comments', $client->comments) }}" maxlength="250"
-                    class="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#c9996b]/40 focus:border-[#c9996b] @error('comments') border-red-300 @enderror">
-                @error('comments')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-            </div>
+                    <div class="mb-4">
+                        <label class="block mb-1 text-sm font-semibold text-gray-600">Comments / Notes</label>
+                        <textarea name="comments" rows="2" class="w-full border-gray-300 rounded-lg bg-gray-50">{{ old('comments', $client->comments) }}</textarea>
+                    </div>
+                </div>
 
-            <div class="flex justify-end gap-3 pt-4">
-                <a href="{{ route('clients.show', $client->renter_no) }}"
-                class="w-48 py-2 text-center border border-stone-200 text-stone-600 hover:bg-stone-50 text-sm font-medium rounded-lg transition-colors">
-                    Cancel
-                </a>
-                <button type="submit"
-                    class="w-48 py-2 bg-[#5c4f4a] hover:bg-[#c9996b] text-white text-sm font-medium rounded-lg transition-colors">
-                    Update Client
-                </button>
+                <div class="p-6 bg-white border border-gray-200 rounded-xl shadow-sm opacity-80">
+                    <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">Internal Assignment (Read-Only)</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-1 text-sm font-semibold text-gray-600">Registering Branch</label>
+                            <input type="text" value="{{ $client->branch_no }}" readonly class="w-full border-gray-200 rounded-lg bg-gray-100 text-gray-500">
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-sm font-semibold text-gray-600">Assigned Staff</label>
+                            <input type="text" value="{{ $client->staff_no }}" readonly class="w-full border-gray-200 rounded-lg bg-gray-100 text-gray-500">
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
-    </div>
-</div>
-@endsection
+        </div>
+    </form>
+</x-app-layout>
