@@ -3,11 +3,20 @@
         <h2 class="text-xl font-semibold leading-tight text-gray-800">Lease Agreements</h2>
     </x-slot>
 
-    <div class="flex justify-end mb-6">
+    <div class="flex items-center justify-between mb-6">
+        {{-- The Search Bar --}}
+        <form action="{{ route('leases.index') }}" method="GET" class="flex w-full max-w-md shadow-sm">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search Lease ID or Renter Last Name..." class="flex-grow border-gray-300 rounded-l-lg bg-gray-50 focus:ring-[#C9956A]">
+            <button type="submit" class="px-6 py-2 font-bold text-white transition rounded-r-lg bg-[#5C5047] hover:bg-gray-800">Search</button>
+            @if(request('search'))
+                <a href="{{ route('leases.index') }}" class="flex items-center ml-3 text-sm font-bold text-gray-500 hover:text-gray-800">Clear</a>
+            @endif
+        </form>
         @hasanyrole('Super Admin|Manager|Supervisor')
-            <a href="{{ route('leases.create') }}" class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase bg-teal-600 rounded-md hover:bg-teal-700">
-                + Draft New Lease
-            </a>
+        {{-- The Action Button --}}
+        <a href="{{ route('leases.create') }}" class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase rounded-md bg-teal-600 hover:bg-teal-700 shadow-sm">
+            + Create Lease
+        </a>
         @endhasanyrole
     </div>
 

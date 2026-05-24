@@ -16,7 +16,18 @@ class PropertyViewingController extends Controller
             ->select('v.*', 'p.street', 'p.city', 'r.first_name AS renter_first', 'r.last_name AS renter_last', 's.first_name AS staff_first', 's.last_name AS staff_last');
 
         if ($search = $request->search) {
-            $query->where('v.viewing_no', 'ilike', "%$search%")->orWhere('p.street', 'ilike', "%$search%");
+            $query->where(function ($q) use ($search) {
+                $q->where('v.viewing_no', 'ilike', "%$search%")
+                  ->orWhere('p.property_no', 'ilike', "%$search%")
+                  ->orWhere('p.street', 'ilike', "%$search%")
+                  ->orWhere('p.city', 'ilike', "%$search%")
+                  ->orWhere('r.first_name', 'ilike', "%$search%")
+                  ->orWhere('r.last_name', 'ilike', "%$search%")
+                  ->orWhere('s.first_name', 'ilike', "%$search%")
+                  ->orWhere('s.last_name', 'ilike', "%$search%")
+                  // NEW: Converts date to searchable text including month names
+                  ->orWhereRaw("TO_CHAR(v.viewing_date, 'YYYY-MM-DD FMMonth Mon DD, YYYY') ILIKE ?", ["%$search%"]);
+            });
         }
 
         $viewings = $query->orderBy('v.viewing_date', 'desc')->paginate(10);

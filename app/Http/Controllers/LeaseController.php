@@ -17,8 +17,17 @@ class LeaseController extends Controller
             ->select('l.*', 'p.street', 'p.city', 'r.first_name', 'r.last_name');
 
         if ($s = $request->search) {
-            $query->where('l.lease_no', 'ilike', "%$s%")
-                  ->orWhere('r.last_name', 'ilike', "%$s%");
+            $query->where(function ($q) use ($s) {
+                $q->where('l.lease_no', 'ilike', "%$s%")
+                  ->orWhere('l.property_no', 'ilike', "%$s%")
+                  ->orWhere('p.street', 'ilike', "%$s%")
+                  ->orWhere('p.city', 'ilike', "%$s%")
+                  ->orWhere('r.first_name', 'ilike', "%$s%")
+                  ->orWhere('r.last_name', 'ilike', "%$s%")
+                  // NEW: Converts date to "2026-12-05 December Dec 05, 2026" before searching
+                  ->orWhereRaw("TO_CHAR(l.rent_start, 'YYYY-MM-DD FMMonth Mon DD, YYYY') ILIKE ?", ["%$s%"])
+                  ->orWhereRaw("TO_CHAR(l.rent_finish, 'YYYY-MM-DD FMMonth Mon DD, YYYY') ILIKE ?", ["%$s%"]);
+            });
         }
 
         $leases = $query->orderBy('l.rent_start', 'desc')->paginate(10);
@@ -50,7 +59,7 @@ class LeaseController extends Controller
         ]);
 
         // Calculate Rent Finish Date to store in your 'rent_finish' column
-        $rent_finish = Carbon::parse($request->rent_start)->addMonths($request->duration_months)->toDateString();
+        $rent_finish = Carbon::parse($request->rent_start)->addMonths((int) $request->duration_months)->toDateString();
 
         // Generate Lease ID
         $last = DB::table('lease_agreements')->orderBy('lease_no', 'desc')->first();

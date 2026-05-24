@@ -15,7 +15,15 @@ class PropertyInspectionController extends Controller
             ->select('i.*', 'p.street', 'p.city', 's.first_name', 's.last_name');
 
         if ($search = $request->search) {
-            $query->where('p.property_no', 'ilike', "%$search%")->orWhere('p.street', 'ilike', "%$search%");
+            $query->where(function ($q) use ($search) {
+                $q->where('i.property_no', 'ilike', "%$search%")
+                  ->orWhere('p.street', 'ilike', "%$search%")
+                  ->orWhere('p.city', 'ilike', "%$search%")
+                  ->orWhere('s.first_name', 'ilike', "%$search%")
+                  ->orWhere('s.last_name', 'ilike', "%$search%")
+                  // NEW: Converts date to searchable text including month names
+                  ->orWhereRaw("TO_CHAR(i.inspection_date, 'YYYY-MM-DD FMMonth Mon DD, YYYY') ILIKE ?", ["%$search%"]);
+            });
         }
 
         $inspections = $query->orderBy('i.inspection_date', 'desc')->paginate(10);

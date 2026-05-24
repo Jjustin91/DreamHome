@@ -179,7 +179,7 @@ class PropertyController extends Controller
 
         DB::table('property_for_rents')->where('property_no', $id)->update([
             'street'           => $validated['street'],
-            'area'             => $validated['area'],
+            'area'             => $validated['area'] ?? '',
             'city'             => $validated['city'],
             'type_of_property' => $validated['type_of_property'],
             'number_of_rooms'  => $validated['number_of_rooms'],
