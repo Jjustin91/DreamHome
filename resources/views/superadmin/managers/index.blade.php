@@ -40,7 +40,15 @@
                                 <td class="px-6 py-4 text-gray-600">{{ $manager->telephone_no }}</td>
                                 <td class="px-6 py-4 text-gray-600">£{{ number_format($manager->salary, 2) }}</td>
                                 <td class="px-6 py-4 text-center">
+                                    {{-- Edit Button --}}
                                     <a href="{{ route('managers.edit', $manager->staff_no) }}" class="font-medium text-dh-sand hover:text-dh-forest">Edit</a>
+                                    
+                                    {{-- Terminate/Delete Button Form --}}
+                                    <form action="{{ route('managers.destroy', $manager->staff_no) }}" method="POST" onsubmit="return confirm('Are you sure you want to terminate this manager and revoke their system access?');" class="inline-block ml-4">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="font-medium text-red-600 transition-colors hover:text-red-900">Terminate</button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach

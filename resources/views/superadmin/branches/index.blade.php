@@ -39,7 +39,15 @@
                                     <td class="px-6 py-4 text-gray-600">{{ $branch->postcode }}</td>
                                     <td class="px-6 py-4 text-gray-600">{{ $branch->telephone_no }}</td>
                                     <td class="px-6 py-4 text-center">
+                                        {{-- Edit Button --}}
                                         <a href="{{ route('branches.edit', $branch->branch_no) }}" class="font-medium text-dh-sand hover:text-dh-forest">Edit</a>
+                                        
+                                        {{-- Delete Button Form --}}
+                                        <form action="{{ route('branches.destroy', $branch->branch_no) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this branch?');" class="inline-block ml-4">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="font-medium text-red-600 transition-colors hover:text-red-900">Delete</button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

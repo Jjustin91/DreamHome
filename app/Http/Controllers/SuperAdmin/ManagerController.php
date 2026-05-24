@@ -98,4 +98,18 @@ class ManagerController extends Controller
 
         return redirect()->route('managers.index')->with('success', 'Manager profile updated.');
     }
+
+    public function destroy(Staff $manager)
+    {
+        // 1. Delete their security login (User account) so they can no longer log in
+        $user = User::where('staff_no', $manager->staff_no)->first();
+        if ($user) {
+            $user->delete();
+        }
+
+        // 2. Delete their HR record
+        $manager->delete();
+
+        return redirect()->route('managers.index')->with('success', 'Manager terminated and system access revoked.');
+    }
 }

@@ -79,6 +79,7 @@ Route::middleware(['auth', 'role:Super Admin'])->group(function () {
     Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
     Route::get('/branches/{branch}/edit', [BranchController::class, 'edit'])->name('branches.edit');
     Route::put('/branches/{branch}', [BranchController::class, 'update'])->name('branches.update');
+    Route::delete('/branches/{branch}', [BranchController::class, 'destroy'])->name('branches.destroy'); // <-- ADDED
     
     // Manager Routes
     Route::get('/managers', [ManagerController::class, 'index'])->name('managers.index');
@@ -86,6 +87,7 @@ Route::middleware(['auth', 'role:Super Admin'])->group(function () {
     Route::post('/managers', [ManagerController::class, 'store'])->name('managers.store');
     Route::get('/managers/{manager}/edit', [ManagerController::class, 'edit'])->name('managers.edit');
     Route::put('/managers/{manager}', [ManagerController::class, 'update'])->name('managers.update');
+    Route::delete('/managers/{manager}', [ManagerController::class, 'destroy'])->name('managers.destroy'); // <-- ADDED
 });
 
 

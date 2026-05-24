@@ -61,4 +61,18 @@ class BranchController extends Controller
 
         return redirect()->route('branches.index')->with('success', 'Branch updated successfully!');
     }
+
+    public function destroy(Branch $branch)
+    {
+        try {
+            $branch->delete();
+            return redirect()->route('branches.index')->with('success', 'Branch deleted successfully.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Error code 23503 is PostgreSQL's code for a Foreign Key Violation
+            if ($e->getCode() == '23503') {
+                return redirect()->route('branches.index')->with('error', 'Cannot delete this branch because there are staff or properties assigned to it. Reassign them first.');
+            }
+            return redirect()->route('branches.index')->with('error', 'An error occurred while trying to delete the branch.');
+        }
+    }
 }
