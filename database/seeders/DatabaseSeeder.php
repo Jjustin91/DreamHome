@@ -30,5 +30,10 @@ class DatabaseSeeder extends Seeder
         } else {
             $this->command->error('Could not find the legacy_data.sql file.');
         }
+
+        // Sync the staff to users AFTER the SQL creates the staff records
+        $this->call([
+            SyncStaffToUsersSeeder::class,
+        ]);
     }
 }
