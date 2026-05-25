@@ -130,7 +130,9 @@ class PropertyController extends Controller
         $prevNo = $idx > 0 ? $allNos[$idx - 1] : null;
         $nextNo = isset($allNos[$idx + 1]) ? $allNos[$idx + 1] : null;
 
-        return view('properties.show', compact('property', 'prevNo', 'nextNo'));
+        $staff = DB::table('staff')->where('staff_no', $property->staff_no)->first();
+
+        return view('properties.show', compact('property', 'staff', 'prevNo', 'nextNo'));
     }
 
     public function edit(string $id)

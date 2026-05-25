@@ -20,7 +20,7 @@
 
     <div class="mb-6">
         <a href="{{ route('properties.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900">
-            ← Back to List
+            &larr; Back to List
         </a>
     </div>
 
@@ -38,12 +38,12 @@
             </div>
             <div class="p-6">
                 <div class="mb-4 text-2xl font-bold">Property: <span style="color:var(--tan)">{{ $property->property_no }}</span></div>
-                <div class="detail-row"><span class="font-medium text-gray-500">Monthly Rent</span><span class="font-bold text-teal-600">₱{{ number_format($property->monthly_rent, 2) }}</span></div>
+                <div class="detail-row"><span class="font-medium text-gray-500">Monthly Rent</span><span class="font-bold text-teal-600">&#8369;{{ number_format($property->monthly_rent, 2) }}</span></div>
                 <div class="detail-row"><span class="font-medium text-gray-500">Status</span><span class="font-bold" style="color: {{ $property->status == 'Available' ? 'var(--teal)' : 'var(--tan)' }}">{{ $property->status }}</span></div>
                 <div class="detail-row"><span class="font-medium text-gray-500">Type</span><span>{{ $property->type_of_property }}</span></div>
                 <div class="detail-row"><span class="font-medium text-gray-500">Rooms</span><span>{{ $property->number_of_rooms }}</span></div>
                 <div class="detail-row"><span class="font-medium text-gray-500">Street</span><span>{{ $property->street }}</span></div>
-                <div class="detail-row"><span class="font-medium text-gray-500">Area</span><span>{{ $property->area ?? '—' }}</span></div>
+                <div class="detail-row"><span class="font-medium text-gray-500">Area</span><span>{{ $property->area ?? '&mdash;' }}</span></div>
                 <div class="detail-row"><span class="font-medium text-gray-500">City</span><span>{{ $property->city }}</span></div>
                 <div class="detail-row"><span class="font-medium text-gray-500">Postcode</span><span>{{ $property->postcode }}</span></div>
             </div>
@@ -63,40 +63,70 @@
                         @endif
                     </div>
                     <div>
-                        <div class="font-bold">{{ $property->owner_name ?? '—' }}</div>
+                        <div class="font-bold">{{ $property->owner_name ?? '&mdash;' }}</div>
                         <div class="text-sm opacity-70">{{ $property->owner_no }}</div>
                     </div>
                 </div>
-                <div class="mb-2 text-sm"><span class="opacity-70">Tel:</span> {{ $property->owner_telephone ?? '—' }}</div>
-                <div class="mb-2 text-sm"><span class="opacity-70">Address:</span> {{ $property->owner_address ?? '—' }}</div>
+                <div class="mb-2 text-sm"><span class="opacity-70">Tel:</span> {{ $property->owner_telephone ?? '&mdash;' }}</div>
+                <div class="mb-2 text-sm"><span class="opacity-70">Address:</span> {{ $property->owner_address ?? '&mdash;' }}</div>
             </div>
 
             <div class="side-panel">
                 <div class="mb-4 text-lg font-bold">Branch Details</div>
                 <div class="mb-2 text-sm"><span class="opacity-70">Branch No:</span> <span style="color:var(--tan)" class="font-bold">{{ $property->branch_no }}</span></div>
-                <div class="mb-2 text-sm"><span class="opacity-70">Street:</span> {{ $property->branch_street ?? '—' }}</div>
-                <div class="mb-2 text-sm"><span class="opacity-70">City:</span> {{ $property->branch_city ?? '—' }}</div>
-                <div class="mb-2 text-sm"><span class="opacity-70">Postcode:</span> {{ $property->branch_postcode ?? '—' }}</div>
+                <div class="mb-2 text-sm"><span class="opacity-70">Street:</span> {{ $property->branch_street ?? '&mdash;' }}</div>
+                <div class="mb-2 text-sm"><span class="opacity-70">City:</span> {{ $property->branch_city ?? '&mdash;' }}</div>
+                <div class="mb-2 text-sm"><span class="opacity-70">Postcode:</span> {{ $property->branch_postcode ?? '&mdash;' }}</div>
+            </div>
+
+            {{-- Managing Staff Card — FIXED AND ARRANGED --}}
+            <div style="background: #5C5047; border-radius: 16px; padding: 24px; color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+                    Staff Assigned
+                </div>
+                
+                @if($staff)
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        {{-- Initials Badge --}}
+                        <div style="flex-shrink: 0; width: 44px; height: 44px; background: #C9956A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: white;">
+                            {{ strtoupper(substr($staff->first_name, 0, 1) . substr($staff->last_name, 0, 1)) }}
+                        </div>
+                        
+                        {{-- Identity Meta Info --}}
+                        <div>
+                            <a href="{{ route('staff.show', $staff->staff_no) }}" style="color: #EEEAE4; font-size: 15px; font-weight: 600; text-decoration: none; display: block; line-height: 1.2;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                                {{ $staff->first_name }} {{ $staff->last_name }}
+                            </a>
+                            <div style="font-size: 11px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">
+                                {{ $staff->job_title }} <span style="opacity: 0.5; margin: 0 4px;">|</span> {{ $staff->staff_no }}
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div style="font-size: 13px; opacity: 0.7; font-style: italic;">
+                        No staff currently assigned to this property.
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 
-    {{-- Restored Next / Previous Navigation Footer --}}
+    {{-- Navigation Footer --}}
     <div class="flex gap-4 pb-8 mt-8">
         @if($prevNo)
-            <a href="{{ route('properties.show', $prevNo) }}" class="px-6 py-2 text-sm font-bold text-white transition-opacity rounded-full" style="background: var(--brown); hover:opacity:0.9;">
-                ← Previous
+            <a href="{{ route('properties.show', $prevNo) }}" class="px-6 py-2 text-sm font-bold text-white transition-opacity rounded-full" style="background: var(--brown);" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                &larr; Previous
             </a>
         @endif
         
         @if($nextNo)
-            <a href="{{ route('properties.show', $nextNo) }}" class="px-6 py-2 text-sm font-bold text-white transition-opacity rounded-full" style="background: var(--brown); hover:opacity:0.9;">
-                Next →
+            <a href="{{ route('properties.show', $nextNo) }}" class="px-6 py-2 text-sm font-bold text-white transition-opacity rounded-full" style="background: var(--brown);" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                Next &rarr;
             </a>
         @endif
     </div>
 
-    {{-- Restored Floating Edit Button --}}
+    {{-- Floating Edit Button --}}
     @hasanyrole('Super Admin|Manager|Supervisor')
         <a href="{{ route('properties.edit', $property->property_no) }}" class="btn-edit-float">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
