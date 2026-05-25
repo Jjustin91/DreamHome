@@ -70,6 +70,15 @@
                                         <span class="mx-2 text-gray-300">|</span>
                                         <a href="{{ route('viewings.edit', $viewing->viewing_no) }}" class="font-medium text-blue-600 hover:text-blue-800">Log Feedback</a>
                                     @endif
+
+                                    @if(auth()->user()->hasRole('Super Admin'))
+                                        <span class="mx-2 text-gray-300">|</span>
+                                        <form action="{{ route('viewings.destroy', $viewing->viewing_no) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this viewing?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="font-medium text-red-600 hover:text-red-800">Delete</button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

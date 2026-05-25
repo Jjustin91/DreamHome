@@ -61,6 +61,15 @@
                                     <a href="{{ route('leases.show', $lease->lease_no) }}" class="font-medium text-dh-sand hover:text-dh-forest">View</a>
                                     <span class="mx-2 text-gray-300">|</span>
                                     <a href="{{ route('leases.edit', $lease->lease_no) }}" class="font-medium text-blue-600 hover:text-blue-800">Edit</a>
+                                    
+                                    @if(auth()->user()->hasRole('Super Admin'))
+                                        <span class="mx-2 text-gray-300">|</span>
+                                        <form action="{{ route('leases.destroy', $lease->lease_no) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this lease?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="font-medium text-red-600 hover:text-red-800">Delete</button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

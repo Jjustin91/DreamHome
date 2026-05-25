@@ -59,10 +59,18 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    {{-- Combines the composite keys into one string: e.g., "PG4_2026-10-15" --}}
-                                    <a href="{{ route('inspections.show', $inspection->property_no . '_' . $inspection->inspection_date) }}" class="font-medium text-dh-sand hover:text-dh-forest">
+                                    <a href="{{ route('inspections.show', $inspection->property_no . '___' . $inspection->inspection_date) }}" class="font-medium text-dh-sand hover:text-dh-forest">
                                         View Report
                                     </a>
+
+                                    @if(auth()->user()->hasRole('Super Admin'))
+                                        <span class="mx-2 text-gray-300">|</span>
+                                        <form action="{{ route('inspections.destroy', $inspection->property_no . '___' . $inspection->inspection_date) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this inspection?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="font-medium text-red-600 hover:text-red-800">Delete</button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
