@@ -63,7 +63,7 @@
                 <td class="font-semibold text-gray-800">{{ $client->first_name }} {{ $client->last_name }}</td>
                 <td class="text-gray-600">{{ $client->pref_property ?? 'No Preference' }}</td>
                 <td class="font-bold text-teal-600">
-                    {{ $client->max_rent ? '₱' . number_format($client->max_rent, 2) : 'Unspecified' }}
+                    {{ $client->max_rent ? '€' . number_format($client->max_rent, 2) : 'Unspecified' }}
                 </td>
                 <td>
                     <div class="flex items-center gap-4">

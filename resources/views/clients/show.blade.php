@@ -46,7 +46,7 @@
                     </div>
                     <div class="p-4 rounded-lg bg-teal-50 border border-teal-100">
                         <div class="text-xs font-bold text-teal-600 uppercase tracking-wide">Max Budget (Monthly)</div>
-                        <div class="mt-1 text-xl font-bold text-teal-800">₱{{ number_format($client->max_rent, 2) }}</div>
+                        <div class="mt-1 text-xl font-bold text-teal-800">€{{ number_format($client->max_rent, 2) }}</div>
                     </div>
                 </div>
 
@@ -64,7 +64,7 @@
                 <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">Assignment Details</h3>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <span class="block text-xs font-bold text-gray-400 uppercase tracking-wide">Registering Branch</span>
+                        <span class="block text-xs font-bold text-gray-400 uppercase tracking-wide">Registered Branch</span>
                         <span class="font-semibold text-gray-700">{{ $client->branch_no }}</span>
                     </div>
                     <div>
