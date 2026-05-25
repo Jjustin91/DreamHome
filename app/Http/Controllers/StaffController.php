@@ -111,7 +111,11 @@ class StaffController extends Controller
         $kin = DB::table('next_of_kins')->where('staff_no', $id)->first();
         $branch = DB::table('branches')->where('branch_no', $staff->branch_no)->first();
 
-        return view('staff.show', compact('staff', 'kin', 'branch'));
+        $managedProperties = DB::table('property_for_rents')
+        ->where('staff_no', $id)
+        ->get();
+
+        return view('staff.show', compact('staff', 'kin', 'branch', 'managedProperties'));
     }
 
 public function edit(string $id)
