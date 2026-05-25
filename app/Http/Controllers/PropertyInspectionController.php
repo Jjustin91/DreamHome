@@ -60,10 +60,8 @@ class PropertyInspectionController extends Controller
 
     public function show(string $id)
     {
-        // 1. Split the URL string back into our two separate keys
-        $keys = explode('_', $id);
-        $property_no = $keys[0];
-        $inspection_date = $keys[1];
+        // 1. Split the URL string back into our two separate keys using THREE underscores
+        [$property_no, $inspection_date] = explode('___', $id);
 
         // 2. Search using BOTH parts of the composite primary key
         $inspection = DB::table('property_inspections')
