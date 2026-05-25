@@ -55,18 +55,15 @@ class LeaseController extends Controller
             'deposit_paid'    => 'required|boolean',
             'rent_start'      => 'required|date',
             // We validate the 3 to 12 month rule from the case study here:
-            'duration_months' => 'required|integer|min:3|max:12', 
+            'rent_finish'     => 'required|date|after:rent_start', 
         ]);
-
-        // Calculate Rent Finish Date to store in your 'rent_finish' column
-        $rent_finish = Carbon::parse($request->rent_start)->addMonths((int) $request->duration_months)->toDateString();
 
         // Generate Lease ID
         $last = DB::table('lease_agreements')->orderBy('lease_no', 'desc')->first();
         $num = $last ? ((int) preg_replace('/\D/', '', $last->lease_no)) + 1 : 1;
         $lease_no = 'LS' . str_pad($num, 3, '0', STR_PAD_LEFT);
 
-        DB::transaction(function () use ($request, $lease_no, $rent_finish) {
+        DB::transaction(function () use ($request, $lease_no) {
             // 1. Create the lease in your specific table
             DB::table('lease_agreements')->insert([
                 'lease_no'       => $lease_no,
@@ -78,7 +75,7 @@ class LeaseController extends Controller
                 'deposit_amount' => $request->deposit_amount,
                 'deposit_paid'   => $request->deposit_paid,
                 'rent_start'     => $request->rent_start,
-                'rent_finish'    => $rent_finish,
+                'rent_finish'    => $request->rent_finish,
                 'created_at'     => now(),
                 'updated_at'     => now(),
             ]);

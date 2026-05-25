@@ -63,6 +63,20 @@ class PropertyViewingController extends Controller
         return redirect()->route('viewings.index')->with('success', 'Viewing scheduled successfully.');
     }
 
+    public function show(string $id)
+    {
+        // Viewings only use a single ID (e.g., VW201)
+        $viewing = DB::table('property_viewings')->where('viewing_no', $id)->first();
+        abort_if(!$viewing, 404);
+
+        $property = DB::table('property_for_rents')->where('property_no', $viewing->property_no)->first();
+        $client = DB::table('renter_details')->where('renter_no', $viewing->renter_no)->first();
+        $staff = DB::table('staff')->where('staff_no', $viewing->staff_no)->first();
+
+        return view('viewings.show', compact('viewing', 'property', 'client', 'staff'));
+    }
+
+    // ADD THIS BLOCK BACK IN:
     public function edit(string $id)
     {
         $viewing = DB::table('property_viewings')->where('viewing_no', $id)->first();

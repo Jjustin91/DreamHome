@@ -12,21 +12,25 @@ class PropertyInspectionController extends Controller
         $query = DB::table('property_inspections AS i')
             ->join('property_for_rents AS p', 'i.property_no', '=', 'p.property_no')
             ->join('staff AS s', 'i.staff_no', '=', 's.staff_no')
-            ->select('i.*', 'p.street', 'p.city', 's.first_name', 's.last_name');
+            ->select(
+                'i.*', 
+                'p.street', 
+                'p.city', 
+                's.first_name AS staff_first', 
+                's.last_name AS staff_last'
+            );
 
         if ($search = $request->search) {
             $query->where(function ($q) use ($search) {
                 $q->where('i.property_no', 'ilike', "%$search%")
                   ->orWhere('p.street', 'ilike', "%$search%")
-                  ->orWhere('p.city', 'ilike', "%$search%")
                   ->orWhere('s.first_name', 'ilike', "%$search%")
-                  ->orWhere('s.last_name', 'ilike', "%$search%")
-                  // NEW: Converts date to searchable text including month names
-                  ->orWhereRaw("TO_CHAR(i.inspection_date, 'YYYY-MM-DD FMMonth Mon DD, YYYY') ILIKE ?", ["%$search%"]);
+                  ->orWhere('s.last_name', 'ilike', "%$search%");
             });
         }
 
         $inspections = $query->orderBy('i.inspection_date', 'desc')->paginate(10);
+        
         return view('inspections.index', compact('inspections'));
     }
 
@@ -52,6 +56,28 @@ class PropertyInspectionController extends Controller
 
         DB::table('property_inspections')->insert($data);
         return redirect()->route('inspections.index')->with('success', 'Inspection logged.');
+    }
+
+    public function show(string $id)
+    {
+        // 1. Split the URL string back into our two separate keys
+        $keys = explode('_', $id);
+        $property_no = $keys[0];
+        $inspection_date = $keys[1];
+
+        // 2. Search using BOTH parts of the composite primary key
+        $inspection = DB::table('property_inspections')
+            ->where('property_no', $property_no)
+            ->where('inspection_date', $inspection_date)
+            ->first();
+            
+        abort_if(!$inspection, 404);
+
+        // 3. Get the associated property and staff details for the view
+        $property = DB::table('property_for_rents')->where('property_no', $inspection->property_no)->first();
+        $staff = DB::table('staff')->where('staff_no', $inspection->staff_no)->first();
+
+        return view('inspections.show', compact('inspection', 'property', 'staff'));
     }
 
     public function destroy(string $id)

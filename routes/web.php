@@ -121,8 +121,8 @@ Route::middleware(['auth', 'role:Super Admin|Manager|Supervisor'])->group(functi
 // -------------------------------------------------------------
 // Accessible by anyone who is logged into the system
 Route::middleware('auth')->group(function () {
-    Route::resource('viewings', PropertyViewingController::class)->except(['show']);
-    Route::resource('inspections', PropertyInspectionController::class)->except(['show', 'edit', 'update']);
+    Route::resource('viewings', PropertyViewingController::class);
+    Route::resource('inspections', PropertyInspectionController::class)->except(['edit', 'update']);
     Route::resource('adverts', AdvertController::class)->except(['show', 'edit', 'update']);
 });
 

@@ -1,54 +1,82 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">Property Inspections</h2>
+        <h2 class="text-xl font-bold leading-tight text-dh-charcoal">
+            {{ __('Property Inspections Log') }}
+        </h2>
     </x-slot>
 
-    <div class="flex items-center justify-between mb-6">
-        {{-- The Search Bar --}}
-        <form action="{{ route('inspections.index') }}" method="GET" class="flex w-full max-w-md shadow-sm">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search Property No or Street..." class="flex-grow border-gray-300 rounded-l-lg bg-gray-50 focus:ring-[#C9956A]">
-            <button type="submit" class="px-6 py-2 font-bold text-white transition rounded-r-lg bg-[#5C5047] hover:bg-gray-800">Search</button>
-            @if(request('search'))
-                <a href="{{ route('inspections.index') }}" class="flex items-center ml-3 text-sm font-bold text-gray-500 hover:text-gray-800">Clear</a>
+    <div class="py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="overflow-hidden bg-white shadow-lg sm:rounded-xl">
+            
+            {{-- Top Action Bar with Omni-Search --}}
+            <div class="flex items-center justify-between p-6 border-b bg-gray-50/50 border-dh-sand/20">
+                <form action="{{ route('inspections.index') }}" method="GET" class="flex w-full max-w-md shadow-sm">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by property, staff, or date..." class="flex-grow border-gray-300 rounded-l-lg bg-white focus:border-dh-forest focus:ring-dh-forest">
+                    <button type="submit" class="px-6 py-2 font-bold text-white transition rounded-r-lg bg-dh-charcoal hover:bg-gray-800">Search</button>
+                    @if(request('search'))
+                        <a href="{{ route('inspections.index') }}" class="flex items-center ml-3 text-sm font-bold text-gray-500 transition hover:text-gray-800">Clear</a>
+                    @endif
+                </form>
+
+                <a href="{{ route('inspections.create') }}" class="px-4 py-2 text-sm font-semibold text-white transition-colors rounded-lg shadow-md bg-dh-forest hover:bg-dh-charcoal">
+                    + Log New Inspection
+                </a>
+            </div>
+            
+            {{-- Inspections Table --}}
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left whitespace-nowrap">
+                    <thead class="tracking-wider text-white uppercase bg-dh-charcoal">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 font-semibold">Property</th>
+                            <th scope="col" class="px-6 py-4 font-semibold">Inspector (Staff)</th>
+                            <th scope="col" class="px-6 py-4 font-semibold">Inspection Date</th>
+                            <th scope="col" class="px-6 py-4 font-semibold">Findings & Comments</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-dh-sand/30">
+                        @foreach ($inspections as $inspection)
+                            <tr class="transition-colors hover:bg-dh-light/50">
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-dh-forest">{{ $inspection->property_no }}</div>
+                                    <div class="text-xs text-gray-500">{{ $inspection->street ?? 'Location available in details' }}</div>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-gray-900">
+                                    {{-- Uses null-coalescing to handle however your Controller joins the names --}}
+                                    {{ $inspection->staff_first ?? $inspection->first_name ?? 'Staff ID:' }} {{ $inspection->staff_last ?? $inspection->last_name ?? $inspection->staff_no }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        {{ \Carbon\Carbon::parse($inspection->inspection_date)->format('M d, Y') }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 truncate max-w-[300px]" title="{{ $inspection->comments }}">
+                                    @if($inspection->comments)
+                                        {{ $inspection->comments }}
+                                    @else
+                                        <span class="text-xs italic text-gray-400">No findings reported.</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    {{-- Combines the composite keys into one string: e.g., "PG4_2026-10-15" --}}
+                                    <a href="{{ route('inspections.show', $inspection->property_no . '_' . $inspection->inspection_date) }}" class="font-medium text-dh-sand hover:text-dh-forest">
+                                        View Report
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Pagination Links --}}
+            @if(method_exists($inspections, 'hasPages') && $inspections->hasPages())
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
+                    {{ $inspections->links() }}
+                </div>
             @endif
-        </form>
 
-        {{-- The Action Button --}}
-        <a href="{{ route('inspections.create') }}" class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase rounded-md bg-teal-600 hover:bg-teal-700 shadow-sm">
-            + Log Inspection
-        </a>
-    </div>
-
-    @if(session('success')) <div class="p-4 mb-6 text-green-800 bg-green-100 rounded-lg">{{ session('success') }}</div> @endif
-
-    <div class="overflow-hidden bg-white border border-gray-200 rounded-xl">
-        <table class="w-full text-left border-collapse">
-            <thead class="text-white" style="background: #5C5047;">
-                <tr>
-                    <th class="p-4 text-sm font-semibold tracking-wide uppercase">Date</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide uppercase">Property</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide uppercase">Inspector</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide uppercase">Comments</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide uppercase">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($inspections as $insp)
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="p-4 font-bold text-gray-800">{{ \Carbon\Carbon::parse($insp->inspection_date)->format('M d, Y') }}</td>
-                    <td class="p-4 text-gray-700">{{ $insp->property_no }} - {{ $insp->street }}</td>
-                    <td class="p-4 text-gray-700">{{ $insp->first_name }} {{ $insp->last_name }}</td>
-                    <td class="p-4 text-sm text-gray-600">{{ $insp->comments ?? 'No issues reported.' }}</td>
-                    <td class="p-4">
-                        {{-- NOTE: We use the composite key encoded with three underscores --- --}}
-                        <form action="{{ route('inspections.destroy', $insp->property_no . '___' . $insp->inspection_date) }}" method="POST" onsubmit="return confirm('Delete this inspection record?')">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="text-sm font-bold text-red-600 hover:text-red-800">DELETE</button>
-                        </form>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        </div>
     </div>
 </x-app-layout>
