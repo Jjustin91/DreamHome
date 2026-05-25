@@ -72,7 +72,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block mb-1 text-sm font-semibold text-[#C9956A]">Monthly Rent (₱) *</label>
+                        <label class="block mb-1 text-sm font-semibold text-[#C9956A]">Monthly Rent (€) *</label>
                         <input type="number" step="0.01" name="monthly_rent" value="{{ old('monthly_rent') }}" class="w-full border-gray-300 rounded-lg bg-gray-50">
                     </div>
 
