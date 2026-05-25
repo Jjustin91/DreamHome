@@ -38,7 +38,7 @@
             </div>
             <div class="p-6">
                 <div class="mb-4 text-2xl font-bold">Property: <span style="color:var(--tan)">{{ $property->property_no }}</span></div>
-                <div class="detail-row"><span class="font-medium text-gray-500">Monthly Rent</span><span class="font-bold text-teal-600">&#8369;{{ number_format($property->monthly_rent, 2) }}</span></div>
+                <div class="detail-row"><span class="font-medium text-gray-500">Monthly Rent</span><span class="font-bold text-teal-600">&euro;{{ number_format($property->monthly_rent, 2) }}</span></div>
                 <div class="detail-row"><span class="font-medium text-gray-500">Status</span><span class="font-bold" style="color: {{ $property->status == 'Available' ? 'var(--teal)' : 'var(--tan)' }}">{{ $property->status }}</span></div>
                 <div class="detail-row"><span class="font-medium text-gray-500">Type</span><span>{{ $property->type_of_property }}</span></div>
                 <div class="detail-row"><span class="font-medium text-gray-500">Rooms</span><span>{{ $property->number_of_rooms }}</span></div>
