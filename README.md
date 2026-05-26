@@ -92,28 +92,29 @@ password: password123
 Railway PostgreSQL
 
 ### Main Tables
-        Tables          |                       Purpose                                 |
-------------------------|---------------------------------------------------------------|
-users	                |   System authentication and Spatie RBAC role management       |
-branches	            |   Physical office locations for the agency                    |
-staff	                |   Employee HR records, salaries, and branch assignments       |
-owners	                |   Contact details for property owners and landlords           |
-renter_details	        |   Client profiles and prospective property preferences        |
-property_for_rents	    |   Inventory of managed, available, and rented properties      |
-lease_agreements	    |   Active and historical financial rental contracts            |
-property_viewings	    |   Appointment schedules and post-tour client feedback logs    |
-property_inspections	|   Immutable condition and compliance audit reports            |
-next_of_kins	        |   Emergency contact information for staff members             |
-newspapers	            |   Registry of local publications used for marketing           |
-property_adverts	    |   Tracking logs for property advertising campaigns            |
+| Tables | Purpose |
+|---|---|
+|users | System authentication and Spatie RBAC role management |
+|branches | Physical office locations for the agency |
+|staff | Employee HR records, salaries, and branch assignments |
+|owners	| Contact details for property owners and landlords |
+|renter_details | Client profiles and prospective property preferences |
+|property_for_rents	| Inventory of managed, available, and rented properties |
+|lease_agreements | Active and historical financial rental contracts |
+|property_viewings | Appointment schedules and post-tour client feedback logs |
+|property_inspections | Immutable condition and compliance audit reports |
+|next_of_kins | Emergency contact information for staff members |
+|newspapers	| Registry of local publications used for marketing |
+|property_adverts | Tracking logs for property advertising campaigns |
 
 ## Module Assignment
 
-| Module | Assigned Developer   |
-|   1    |  Zyra Nadine Flores  |
-|   2    |   Archelle Aparici   |
-|   3    | Jonathan Justiniani  |
-|   4    |    Bruce Bilar       |
+| Module | Assigned Developer |
+|---|---|
+| 1 | Zyra Nadine Flores |
+| 2 | Archelle Aparici |
+| 3 | Jonathan Justiniani |
+| 4 | Bruce Bilar |
 
 
 ---
